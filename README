@@ -1,3 +1,11 @@
-My.sensors
+My.Sensors
 
    Real time communication platform for sensor device communication
+
+How to set up
+
+    Clone the repository 
+    
+    Initilize git-flow (Branching modle for git) with 'git flow init'
+    
+    Create git-flow feature branch and work on it
