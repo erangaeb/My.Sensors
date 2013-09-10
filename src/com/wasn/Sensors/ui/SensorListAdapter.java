@@ -25,6 +25,7 @@ public class SensorListAdapter extends BaseAdapter {
 
     /**
      * Initialize context variables
+     *
      * @param context activity context
      * @param sensorList sharing user list
      */
@@ -35,6 +36,13 @@ public class SensorListAdapter extends BaseAdapter {
         this.sensorList = sensorList;
     }
 
+    /**
+     * Reload content in adapter
+     */
+    public void reloadAdapter(ArrayList<Sensor> sensorList) {
+        this.sensorList = sensorList;
+        notifyDataSetChanged();
+    }
     /**
      * Get size of sensor list
      * @return userList size

@@ -42,6 +42,7 @@ public class HomeActivity extends FragmentActivity {
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle("My.Sensors");
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -157,7 +158,7 @@ public class HomeActivity extends FragmentActivity {
          */
         @Override
         public void onDrawerClosed(View view) {
-            getActionBar().setTitle("My.Sensors");
+            //getActionBar().setTitle("My.Sensors");
             invalidateOptionsMenu();
         }
 
@@ -166,7 +167,7 @@ public class HomeActivity extends FragmentActivity {
          */
         @Override
         public void onDrawerOpened(View drawerView) {
-            getActionBar().setTitle("My.Sensors");
+            //getActionBar().setTitle("My.Sensors");
             invalidateOptionsMenu();
         }
     }
@@ -191,6 +192,8 @@ public class HomeActivity extends FragmentActivity {
 
                // Add the fragment to the 'fragment_container' FrameLayout
                getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+
+               getActionBar().setTitle("Friends");
             } else if(position==0) {
                SensorList fragment = new SensorList();
                // In case this activity was started with special instructions from an Intent,
@@ -199,6 +202,8 @@ public class HomeActivity extends FragmentActivity {
 
                // Add the fragment to the 'fragment_container' FrameLayout
                getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+
+               getActionBar().setTitle("My.Sensors");
            }
 
         }

@@ -30,24 +30,17 @@ public class FriendList extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        populateList();
+        // after creating fragment we initialize friend list
+        // TODO need to fill friend list with backend data
+        initFriendList();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.friend_list_layout, null);
-        init(root);
+        initUI(root);
 
         return root;
-    }
-
-    /**
-     * Initialize activity components
-     *  1. Initialize layout components
-     *  2. Initialize list
-     */
-    private void init(View view) {
-        initUI(view);
     }
 
     /**
@@ -66,9 +59,9 @@ public class FriendList extends Fragment {
     /**
      * Create sensor list
      */
-    private void populateList() {
+    private void initFriendList() {
+        // populate sample data to list
         userList = new ArrayList<User>();
-
         userList.add(new User("eranga", "erangaeb@gmail.com"));
         userList.add(new User("pagero", "pagero@gmail.com"));
         userList.add(new User("test", "test@gmail.com"));

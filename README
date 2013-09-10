@@ -6,6 +6,9 @@ How to set up
 
     Clone the repository 
     
+    Add dependencies (use appcompact library and android support library)
+
     Initilize git-flow (Branching modle for git) with 'git flow init'
     
     Create git-flow feature branch and work on it
+
