@@ -1,7 +1,7 @@
 package com.wasn.Sensors.service;
 
 import android.os.AsyncTask;
-import com.wasn.Sensors.ui.SensorListActivity;
+import com.wasn.Sensors.ui.SensorList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,9 +11,9 @@ import com.wasn.Sensors.ui.SensorListActivity;
  * To change this template use File | Settings | File Templates.
  */
 public class TestUpdateService extends AsyncTask<String, String, String> {
-    SensorListActivity activity;
+    SensorList activity;
 
-    public TestUpdateService(SensorListActivity activity) {
+    public TestUpdateService(SensorList activity) {
         this.activity = activity;
     }
 

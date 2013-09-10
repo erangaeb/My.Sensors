@@ -53,7 +53,7 @@ public class HomeActivity extends FragmentActivity {
         homeActionBarDrawerToggle = new HomeActionBarDrawerToggle(this, drawerLayout);
         drawerLayout.setDrawerListener(homeActionBarDrawerToggle);
 
-        SensorListActivity fragment = new SensorListActivity();
+        SensorList fragment = new SensorList();
         // In case this activity was started with special instructions from an Intent,
         // pass the Intent's extras to the fragment as arguments
         fragment.setArguments(getIntent().getExtras());
@@ -183,15 +183,23 @@ public class HomeActivity extends FragmentActivity {
             drawerListView.setItemChecked(position, true);
             drawerLayout.closeDrawer(drawerListView);
 
-           /* if(position == 0) {
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                tx.replace(R.id.main, Fragment.instantiate(Drawyer.this, "com.wasn.mysensors.Friend"));
-                tx.commit();
-            } else if(position==1) {
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                tx.replace(R.id.main, Fragment.instantiate(Drawyer.this, "com.wasn.mysensors.Search"));
-                tx.commit();
-            }*/
+           if(position == 1) {
+               FriendList fragment = new FriendList();
+               // In case this activity was started with special instructions from an Intent,
+               // pass the Intent's extras to the fragment as arguments
+               fragment.setArguments(getIntent().getExtras());
+
+               // Add the fragment to the 'fragment_container' FrameLayout
+               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+            } else if(position==0) {
+               SensorList fragment = new SensorList();
+               // In case this activity was started with special instructions from an Intent,
+               // pass the Intent's extras to the fragment as arguments
+               fragment.setArguments(getIntent().getExtras());
+
+               // Add the fragment to the 'fragment_container' FrameLayout
+               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+           }
 
         }
 
