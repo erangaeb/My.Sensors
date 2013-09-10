@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <RelativeLayout
+    <!--<RelativeLayout
             android:layout_width="fill_parent"
             android:background="#333333"
             android:layout_height="50dp"
@@ -77,7 +77,7 @@
             </TextView>
         </RelativeLayout>
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <ListView
             android:paddingLeft="10dp"

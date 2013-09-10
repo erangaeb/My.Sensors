@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -55,9 +53,13 @@ public class HomeActivity extends FragmentActivity {
         homeActionBarDrawerToggle = new HomeActionBarDrawerToggle(this, drawerLayout);
         drawerLayout.setDrawerListener(homeActionBarDrawerToggle);
 
-        //FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        //    tx.replace(R.id.main, Fragment.instantiate(HomeActivity.this, "com.wasn.Sensors.ui.SensorListActivity"));
-        //tx.commit();
+        SensorListActivity fragment = new SensorListActivity();
+        // In case this activity was started with special instructions from an Intent,
+        // pass the Intent's extras to the fragment as arguments
+        fragment.setArguments(getIntent().getExtras());
+
+        // Add the fragment to the 'fragment_container' FrameLayout
+        getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
     }
 
     /**
