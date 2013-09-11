@@ -105,7 +105,14 @@ public class SensorListAdapter extends BaseAdapter {
 
         // bind text with view holder content view for efficient use
         holder.sensorName.setText(sensor.getSensorName());
-        holder.sensorValue.setText(sensor.getSensorvalue());
+        holder.sensorValue.setText(sensor.getSensorValue());
+
+        // different color for not available sensors
+        if(sensor.isAvailable()) {
+            view.setBackgroundResource(R.drawable.list_row_background);
+        } else {
+            view.setBackgroundResource(R.drawable.not_available_list_row_background);
+        }
 
         return view;
     }

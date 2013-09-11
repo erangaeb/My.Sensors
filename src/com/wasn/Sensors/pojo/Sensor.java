@@ -7,7 +7,14 @@ package com.wasn.Sensors.pojo;
 public class Sensor {
 
     String sensorName;
-    String sensorvalue;
+    String sensorValue;
+    boolean isAvailable;
+
+    public Sensor(String sensorName, String sensorValue, boolean available) {
+        this.sensorName = sensorName;
+        this.sensorValue = sensorValue;
+        isAvailable = available;
+    }
 
     public String getSensorName() {
         return sensorName;
@@ -17,16 +24,19 @@ public class Sensor {
         this.sensorName = sensorName;
     }
 
-    public String getSensorvalue() {
-        return sensorvalue;
+    public String getSensorValue() {
+        return sensorValue;
     }
 
-    public void setSensorvalue(String sensorvalue) {
-        this.sensorvalue = sensorvalue;
+    public void setSensorValue(String sensorValue) {
+        this.sensorValue = sensorValue;
     }
 
-    public Sensor(String sensorName, String sensorvalue) {
-        this.sensorName = sensorName;
-        this.sensorvalue = sensorvalue;
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
 }

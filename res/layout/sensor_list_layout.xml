@@ -81,7 +81,7 @@
 
     <ListView
             android:paddingLeft="10dp"
-            android:paddingRight="4dp"
+            android:paddingRight="0dp"
             android:background="#e5e5e5"
             android:id="@+id/sensor_list_layout_sensor_list"
             android:layout_width="fill_parent"
@@ -89,7 +89,7 @@
             android:listSelector="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@android:color/transparent"
-            android:dividerHeight="10.0sp"
+            android:dividerHeight="5.0sp"
             android:scrollbarStyle="outsideInset">
     </ListView>
 

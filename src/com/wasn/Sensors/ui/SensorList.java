@@ -89,19 +89,59 @@ public class SensorList extends Fragment implements SensorEventListener {
         // not using TYPE_TEMPERATURE since its deprecated
         if(sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE) , SensorManager.SENSOR_DELAY_NORMAL);
-            sensorList.add(new Sensor("Temperature", "TEMPERATURE"));
+            sensorList.add(new Sensor("Temperature", "TEMPERATURE", true));
+        } else {
+            sensorList.add(new Sensor("Temperature", "NOT AVAILABLE", false));
         }
         if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LIGHT) != null) {
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LIGHT) , SensorManager.SENSOR_DELAY_NORMAL);
-            sensorList.add(new Sensor("Light", "LIGHT"));
+            sensorList.add(new Sensor("Light", "LIGHT", true));
+        } else {
+            sensorList.add(new Sensor("Light", "NOT AVAILABLE", false));
         }
         if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_PRESSURE) != null) {
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_PRESSURE) , SensorManager.SENSOR_DELAY_NORMAL);
-            sensorList.add(new Sensor("Pressure", "PRESSURE"));
+            sensorList.add(new Sensor("Pressure", "PRESSURE", true));
+        } else {
+            sensorList.add(new Sensor("Pressure", "NOT AVAILABLE", false));
         }
         if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_RELATIVE_HUMIDITY) , SensorManager.SENSOR_DELAY_NORMAL);
-            sensorList.add(new Sensor("Humidity", "HUMIDITY"));
+            sensorList.add(new Sensor("Humidity", "HUMIDITY",true));
+        } else {
+            sensorList.add(new Sensor("Humidity", "NOT AVAILABLE", false));
+        }
+
+        // Listen for available Motion sensors
+        //  1. TYPE_ACCELEROMETER - Acceleration force along the x axis (m/s2)
+        //  2. TYPE_GRAVITY - Force of gravity along the y axis (m/s2)
+        //  3. TYPE_LINEAR_ACCELERATION - Acceleration force along the x axis (m/s2)
+        if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER) != null) {
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER) , SensorManager.SENSOR_DELAY_NORMAL);
+            sensorList.add(new Sensor("Accelerometer", "ACCELEROMETER", true));
+        } else {
+            sensorList.add(new Sensor("Accelerometer", "NOT AVAILABLE", false));
+        }
+        if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_GRAVITY) != null) {
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_GRAVITY) , SensorManager.SENSOR_DELAY_NORMAL);
+            sensorList.add(new Sensor("Gravity", "GRAVITY", true));
+        } else {
+            sensorList.add(new Sensor("Gravity", "NOT AVAILABLE", false));
+        }
+        if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LINEAR_ACCELERATION) != null) {
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LINEAR_ACCELERATION) , SensorManager.SENSOR_DELAY_NORMAL);
+            sensorList.add(new Sensor("Linear Acceleration", "ACCELERATION", true));
+        } else {
+            sensorList.add(new Sensor("Linear Acceleration", "NOT AVAILABLE", false));
+        }
+
+        // Listen for available Position sensors
+        //  1. TYPE_MAGNETIC_FIELD - Geomagnetic field strength along the x axis (μT)
+        if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_MAGNETIC_FIELD) != null) {
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_MAGNETIC_FIELD) , SensorManager.SENSOR_DELAY_NORMAL);
+            sensorList.add(new Sensor("Magnetic Field", "MAGNETIC FIELD", true));
+        } else {
+            sensorList.add(new Sensor("Magnetic Field", "NOT AVAILABLE", false));
         }
 
         // TODO add other important sensors to list
@@ -127,26 +167,50 @@ public class SensorList extends Fragment implements SensorEventListener {
                 case android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE:
                     // set temperature
                     // temperature sensor return only one value (values[0])
-                    //sensorList.get(0).setSensorvalue(Float.toString(sensorEvent.values[0]));
-                    //adapter.reloadAdapter(sensorList);
+                    sensorList.get(0).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_LIGHT:
                     // set light value
                     // light sensor return only one value (values[0])
-                    sensorList.get(0).setSensorvalue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(1).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_PRESSURE:
                     // set pressure
                     // pressure sensor return only one value (values[0])
-                    sensorList.get(1).setSensorvalue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(2).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
-                case android.hardware.Sensor.TYPE_GYROSCOPE:
+                case android.hardware.Sensor.TYPE_RELATIVE_HUMIDITY:
                     // set humidity
-                    // gyroscope sensor return only one value (values[0])
-                    //sensorList.get(3).setSensorvalue(Float.toString(sensorEvent.values[0]));
-                    //adapter.reloadAdapter(sensorList);
+                    // humidity sensor return only one value (values[0])
+                    sensorList.get(3).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    adapter.reloadAdapter(sensorList);
+                    break;
+                case android.hardware.Sensor.TYPE_ACCELEROMETER:
+                    // set accelerometer
+                    // use accelerometer only on x axis (values[0])
+                    sensorList.get(4).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    adapter.reloadAdapter(sensorList);
+                    break;
+                case android.hardware.Sensor.TYPE_GRAVITY:
+                    // set gravity
+                    // use gravity on y axis (values[1])
+                    sensorList.get(5).setSensorValue(Float.toString(sensorEvent.values[1]));
+                    adapter.reloadAdapter(sensorList);
+                    break;
+                case android.hardware.Sensor.TYPE_LINEAR_ACCELERATION:
+                    // set acceleration
+                    // use values of x axis (values[0])
+                    sensorList.get(6).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    adapter.reloadAdapter(sensorList);
+                    break;
+                case android.hardware.Sensor.TYPE_MAGNETIC_FIELD:
+                    // set magnetic field
+                    // use only value of x axis (values[0])
+                    sensorList.get(7).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    adapter.reloadAdapter(sensorList);
                     break;
             }
         }
