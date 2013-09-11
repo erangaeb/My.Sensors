@@ -4,6 +4,8 @@ import android.content.Context;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.*;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,8 +15,10 @@ import android.widget.ListView;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.pojo.Sensor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Display sensor list/ Fragment
@@ -30,7 +34,15 @@ public class SensorList extends Fragment implements SensorEventListener {
 
     // manager for sensors
     private SensorManager sensorManager;
-    private List<android.hardware.Sensor> deviceSensorList;
+
+    // location
+    //  1. location provider
+    //  2. location manager
+    //  3. location listener
+    private static final String LOCATION_PROVIDER = LocationManager.NETWORK_PROVIDER;
+    LocationManager locationManager;
+    Location lastKnowLocation;
+    LocationListener locationListener;
 
     /**
      * {@inheritDoc}
@@ -40,10 +52,14 @@ public class SensorList extends Fragment implements SensorEventListener {
         super.onActivityCreated(savedInstanceState);
 
         // after created activity
-        //  1. initialize sensors
-        //  2. create sensor list
+        //  1. initialize sensor list
+        //  2. initialize sensors
+        //  3. create sensor list
+        //  4. initialize location listener
+        initSensorLst();
         initSensors();
         initSensorList();
+        initLocationListener();
     }
 
     /**
@@ -71,15 +87,21 @@ public class SensorList extends Fragment implements SensorEventListener {
     }
 
     /**
+     * Initialize sensor list to be display
+     * Initially add location sensor to list
+     */
+    private void initSensorLst() {
+        sensorList = new ArrayList<Sensor>();
+        sensorList.add(new Sensor("Location", "NOT AVAILABLE", false));
+    }
+
+    /**
      * Initialize sensor managers and sensor list
      * Get available sensors and current sensor data
      */
     private void initSensors() {
-        sensorList = new ArrayList<Sensor>();
-
         // get all sensors manager
         sensorManager = (SensorManager) this.getActivity().getSystemService(Context.SENSOR_SERVICE);
-        deviceSensorList = sensorManager.getSensorList(android.hardware.Sensor.TYPE_ALL);
 
         // Listen for environment sensors
         //  1. TYPE_AMBIENT_TEMPERATURE - Ambient air temperature
@@ -145,7 +167,36 @@ public class SensorList extends Fragment implements SensorEventListener {
         }
 
         // TODO add other important sensors to list
-        // TODO create mechanism to display only available sensors and values
+    }
+
+    /**
+     * Initialize location mangers to listen location changes
+     */
+    private void initLocationListener() {
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        lastKnowLocation = locationManager.getLastKnownLocation(LOCATION_PROVIDER);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                new GetAddressTask(getActivity()).execute(location);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        // register for get location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
 
     /**
@@ -167,49 +218,49 @@ public class SensorList extends Fragment implements SensorEventListener {
                 case android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE:
                     // set temperature
                     // temperature sensor return only one value (values[0])
-                    sensorList.get(0).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(1).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_LIGHT:
                     // set light value
                     // light sensor return only one value (values[0])
-                    sensorList.get(1).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(2).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_PRESSURE:
                     // set pressure
                     // pressure sensor return only one value (values[0])
-                    sensorList.get(2).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(3).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_RELATIVE_HUMIDITY:
                     // set humidity
                     // humidity sensor return only one value (values[0])
-                    sensorList.get(3).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(4).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_ACCELEROMETER:
                     // set accelerometer
                     // use accelerometer only on x axis (values[0])
-                    sensorList.get(4).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(5).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_GRAVITY:
                     // set gravity
                     // use gravity on y axis (values[1])
-                    sensorList.get(5).setSensorValue(Float.toString(sensorEvent.values[1]));
+                    sensorList.get(6).setSensorValue(Float.toString(sensorEvent.values[1]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_LINEAR_ACCELERATION:
                     // set acceleration
                     // use values of x axis (values[0])
-                    sensorList.get(6).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(7).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
                 case android.hardware.Sensor.TYPE_MAGNETIC_FIELD:
                     // set magnetic field
                     // use only value of x axis (values[0])
-                    sensorList.get(7).setSensorValue(Float.toString(sensorEvent.values[0]));
+                    sensorList.get(8).setSensorValue(Float.toString(sensorEvent.values[0]));
                     adapter.reloadAdapter(sensorList);
                     break;
             }
@@ -221,5 +272,64 @@ public class SensorList extends Fragment implements SensorEventListener {
      */
     @Override
     public void onAccuracyChanged(android.hardware.Sensor sensor, int i) {
+    }
+
+    /**
+     * Find address of given location
+     * Geocoder.getFromLocation() method is synchronous, and may take a long time to do its work,
+     * So you should call the method from the doInBackground() method of an AsyncTask
+     */
+    private class GetAddressTask extends AsyncTask<Location, Void, String> {
+        Context mContext;
+        public GetAddressTask(Context context) {
+            super();
+            mContext = context;
+        }
+
+        /**
+         * Get a Geocoder instance, get the latitude and longitude
+         * look up the address, and return it
+         *
+         * @params params One or more Location objects
+         * @return A string containing the address of the current
+         * location, or an empty string if no address can be found,
+         * or an error message
+         */
+        @Override
+        protected String doInBackground(Location... params) {
+            Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
+            // Get the current location from the input parameter list
+            Location loc = params[0];
+            // Create a list to contain the result address
+            List<Address> addresses;
+            try {
+                // return 1 address.
+                addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return "NOT_AVAILABLE";
+            } catch (IllegalArgumentException e2) {
+                e2.printStackTrace();
+                return "NOT_AVAILABLE";
+            }
+            // If the reverse geocode returned an address
+            if (addresses != null && addresses.size() > 0) {
+                // Get the first address
+                Address address = addresses.get(0);
+
+                // use address line and locality as location
+                return address.getAddressLine(0) + ", " +address.getLocality();
+            } else {
+                return "NOT_AVAILABLE";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String address) {
+            // add address lo sensor list
+            sensorList.get(0).setSensorValue(address);
+            sensorList.get(0).setAvailable(true);
+            adapter.reloadAdapter(sensorList);
+        }
     }
 }
