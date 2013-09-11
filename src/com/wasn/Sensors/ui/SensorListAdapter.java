@@ -1,10 +1,12 @@
 package com.wasn.Sensors.ui;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
@@ -23,6 +25,9 @@ public class SensorListAdapter extends BaseAdapter {
     private ArrayList<Sensor> sensorList;
     private SensorApplication application;
 
+    // set custom font
+    Typeface face;
+
     /**
      * Initialize context variables
      *
@@ -31,6 +36,8 @@ public class SensorListAdapter extends BaseAdapter {
      */
     public SensorListAdapter(Context context, ArrayList<Sensor> sensorList) {
         //application = (Pay2nApplication) context.getApplicationContext();
+
+        face = Typeface.createFromAsset(context.getAssets(), "fonts/vegur_2.otf");
 
         this.context = context;
         this.sensorList = sensorList;
@@ -96,6 +103,11 @@ public class SensorListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.sensorName = (TextView) view.findViewById(R.id.sensor_list_row_layout_sensor_name);
             holder.sensorValue = (TextView) view.findViewById(R.id.sensor_list_row_layout_sensor_value);
+            holder.share = (RelativeLayout) view.findViewById(R.id.sensor_list_row_layout_share);
+
+            // set custom font
+            holder.sensorName.setTypeface(face);
+            holder.sensorValue.setTypeface(face);
 
             view.setTag(holder);
         } else {
@@ -108,10 +120,13 @@ public class SensorListAdapter extends BaseAdapter {
         holder.sensorValue.setText(sensor.getSensorValue());
 
         // different color for not available sensors
+        // disable share
         if(sensor.isAvailable()) {
             view.setBackgroundResource(R.drawable.list_row_background);
+            holder.share.setVisibility(View.VISIBLE);
         } else {
             view.setBackgroundResource(R.drawable.not_available_list_row_background);
+            holder.share.setVisibility(View.GONE);
         }
 
         return view;
@@ -123,6 +138,7 @@ public class SensorListAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView sensorName;
         TextView sensorValue;
+        RelativeLayout share;
     }
 
 }
