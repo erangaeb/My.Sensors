@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.wasn.Sensors.R;
+import com.wasn.Sensors.application.SensorApplication;
 import com.wasn.Sensors.pojo.DrawerItem;
 
 import java.util.ArrayList;
@@ -55,12 +56,18 @@ public class HomeActivity extends FragmentActivity {
         drawerLayout.setDrawerListener(homeActionBarDrawerToggle);
 
         SensorList fragment = new SensorList();
+
         // In case this activity was started with special instructions from an Intent,
         // pass the Intent's extras to the fragment as arguments
-        fragment.setArguments(getIntent().getExtras());
+        // set MY_SENSOR argument
+        Bundle args = new Bundle();
+        args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
+        fragment.setArguments(args);
 
         // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+
+        getActionBar().setTitle("My.Sensors");
     }
 
     /**
@@ -69,9 +76,9 @@ public class HomeActivity extends FragmentActivity {
     private void initDrawer() {
         // initialize drawer content
         ArrayList<DrawerItem> drawerItemList = new ArrayList<DrawerItem>();
-        drawerItemList.add(new DrawerItem("Sensors", R.drawable.sensors));
+        drawerItemList.add(new DrawerItem("MySensors", R.drawable.sensors));
+        drawerItemList.add(new DrawerItem("Friends.Sensors", R.drawable.share));
         drawerItemList.add(new DrawerItem("Friends", R.drawable.friends));
-        drawerItemList.add(new DrawerItem("Sharing",R.drawable.share));
 
         DrawerAdapter adapter= new DrawerAdapter(HomeActivity.this, drawerItemList);
 
@@ -184,26 +191,42 @@ public class HomeActivity extends FragmentActivity {
             drawerListView.setItemChecked(position, true);
             drawerLayout.closeDrawer(drawerListView);
 
-           if(position == 1) {
-               FriendList fragment = new FriendList();
+           if(position == 0) {
+               SensorList fragment = new SensorList();
+
                // In case this activity was started with special instructions from an Intent,
                // pass the Intent's extras to the fragment as arguments
+               // set MY_SENSOR argument
+               Bundle args = new Bundle();
+               args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
+               fragment.setArguments(args);
+
+               // Add the fragment to the 'fragment_container' FrameLayout
+               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+
+               getActionBar().setTitle("My.Sensors");
+            } else if(position==1) {
+               SensorList fragment = new SensorList();
+
+               // In case this activity was started with special instructions from an Intent,
+               // pass the Intent's extras to the fragment as arguments
+               // set MY_SENSOR argument
+               Bundle args = new Bundle();
+               args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.FRIENDS_SENSORS);
+               fragment.setArguments(args);
+
+               // Add the fragment to the 'fragment_container' FrameLayout
+               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+
+               getActionBar().setTitle("Friends.Sensors");
+           } else if(position==2) {
+               FriendList fragment = new FriendList();
                fragment.setArguments(getIntent().getExtras());
 
                // Add the fragment to the 'fragment_container' FrameLayout
                getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
 
                getActionBar().setTitle("Friends");
-            } else if(position==0) {
-               SensorList fragment = new SensorList();
-               // In case this activity was started with special instructions from an Intent,
-               // pass the Intent's extras to the fragment as arguments
-               fragment.setArguments(getIntent().getExtras());
-
-               // Add the fragment to the 'fragment_container' FrameLayout
-               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
-
-               getActionBar().setTitle("My.Sensors");
            }
 
         }

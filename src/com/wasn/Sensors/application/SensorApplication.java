@@ -14,6 +14,13 @@ public class SensorApplication extends Application {
 
     private String location;
 
+    // determine sensor type
+    //  1. my sensors
+    //  2. friends sensors
+    public final static String MY_SENSORS = "MY_SENSORS";
+    public final static String FRIENDS_SENSORS = "FRIENDS_SENSORS";
+    public final static String SENSOR_TYPE = "SENSOR_TYPE";
+
     public String getLocation() {
         return location;
     }

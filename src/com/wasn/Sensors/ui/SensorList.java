@@ -1,6 +1,7 @@
 package com.wasn.Sensors.ui;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -11,7 +12,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
 import com.wasn.Sensors.pojo.Sensor;
@@ -46,6 +49,17 @@ public class SensorList extends Fragment implements SensorEventListener {
     Location lastKnowLocation;
     LocationListener locationListener;
 
+    // two sensor types to display
+    //  1. My Sensors
+    //  2. Friends Sensors
+    private String sensorType;
+
+    // empty view when display on no sensors available
+    ViewStub emptyView;
+
+    // set custom font
+    Typeface face;
+
     /**
      * {@inheritDoc}
      */
@@ -55,15 +69,28 @@ public class SensorList extends Fragment implements SensorEventListener {
 
         application = (SensorApplication) getActivity().getApplication();
 
-        // after created activity
-        //  1. initialize sensor list
-        //  2. initialize sensors
-        //  3. create sensor list
-        //  4. initialize location listener
-        initSensorList();
-        initSensors();
-        initLocationListener();
-        initSensorListView();
+        initEmptyView();
+
+        // get extra values from intent and determine which sensors to displaying
+        // two sensor types to display
+        //  1. My Sensors
+        //  2. Friends Sensors
+        this.sensorType = getArguments().getString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
+        if(sensorType.equals(SensorApplication.MY_SENSORS)) {
+            // display my sensors
+            //  1. initialize my sensors
+            //  2. initialize location listener
+            //  3. create list view
+            initMySensors();
+            initLocationListener();
+            initSensorListView();
+        } else {
+            // display friends sensors
+            //  1. initialize friends sensor list
+            //  2. create list view
+            initFriendsSensors();
+            initSensorListView();
+        }
     }
 
     /**
@@ -81,14 +108,15 @@ public class SensorList extends Fragment implements SensorEventListener {
     public void onPause() {
         super.onPause();
 
-        locationManager.removeUpdates(locationListener);
+        if(this.sensorType.equals(SensorApplication.MY_SENSORS))
+            locationManager.removeUpdates(locationListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        locationManager.removeUpdates(locationListener);
+        if(this.sensorType.equals(SensorApplication.MY_SENSORS))
+            locationManager.removeUpdates(locationListener);
     }
 
     @Override
@@ -96,8 +124,10 @@ public class SensorList extends Fragment implements SensorEventListener {
         super.onResume();
 
         // register for get location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        if(this.sensorType.equals(SensorApplication.MY_SENSORS)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        }
     }
 
     /**
@@ -106,33 +136,45 @@ public class SensorList extends Fragment implements SensorEventListener {
     private void initUI(View view) {
         sensorListView = (ListView)view.findViewById(R.id.sensor_list_layout_sensor_list);
 
+        // initialize custom font
+        face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/vegur_2.otf");
+
         // add header and footer for list
         View headerView = View.inflate(this.getActivity(), R.layout.list_header, null);
         View footerView = View.inflate(this.getActivity(), R.layout.list_header, null);
         sensorListView.addHeaderView(headerView);
         sensorListView.addFooterView(footerView);
+
+
     }
 
     /**
-     * Initialize sensor list to be display
-     * Initially add location sensor to list
+     * Initialize empty view for list view
+     * empty view need to be display when no sensors available
      */
-    private void initSensorList() {
-        sensorList = new ArrayList<Sensor>();
-        if(application.getLocation().equalsIgnoreCase("NOT AVAILABLE")) {
-            sensorList.add(new Sensor("Location", application.getLocation(), false));
-        } else {
-            sensorList.add(new Sensor("Location", application.getLocation(), true));
-        }
+    private void initEmptyView() {
+        emptyView = (ViewStub) getActivity().findViewById(R.id.sensor_list_layout_empty_view);
+        View inflatedEmptyView = emptyView.inflate();
+        TextView emptyText = (TextView) inflatedEmptyView.findViewById(R.id.empty_text);
+        emptyText.setText("No friends sensors available");
+        emptyText.setTypeface(face);
     }
 
     /**
      * Initialize sensor managers and sensor list
      * Get available sensors and current sensor data
      */
-    private void initSensors() {
+    private void initMySensors() {
         // get all sensors manager
+        sensorList = new ArrayList<Sensor>();
         sensorManager = (SensorManager) this.getActivity().getSystemService(Context.SENSOR_SERVICE);
+
+        // initially add location sensor
+        if(application.getLocation().equalsIgnoreCase("NOT AVAILABLE")) {
+            sensorList.add(new Sensor("Location", application.getLocation(), false));
+        } else {
+            sensorList.add(new Sensor("Location", application.getLocation(), true));
+        }
 
         // Listen for environment sensors
         //  1. TYPE_AMBIENT_TEMPERATURE - Ambient air temperature
@@ -200,6 +242,11 @@ public class SensorList extends Fragment implements SensorEventListener {
         // TODO add other important sensors to list
     }
 
+    private void initFriendsSensors() {
+        sensorList = new ArrayList<Sensor>();
+        //sensorList.add(new Sensor("Temperature @Vijitha", "27.5", true));
+    }
+
     /**
      * Initialize location mangers to listen location changes
      */
@@ -233,8 +280,12 @@ public class SensorList extends Fragment implements SensorEventListener {
      */
     private void initSensorListView() {
         // construct list adapter
-        adapter = new SensorListAdapter(SensorList.this.getActivity(), sensorList);
-        sensorListView.setAdapter(adapter);
+        if(sensorList.size()>0) {
+            adapter = new SensorListAdapter(SensorList.this.getActivity(), sensorList);
+            sensorListView.setAdapter(adapter);
+        } else {
+            sensorListView.setEmptyView(emptyView);
+        }
     }
 
     /**
