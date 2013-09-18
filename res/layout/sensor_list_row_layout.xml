@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:textColor="#000"
+            android:textColor="#4a4a4a"
             android:layout_marginLeft="15dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
@@ -38,6 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:textColor="#4a4a4a"
                 android:text="Share"
                 android:textSize="16sp">
 
@@ -70,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
                 android:id="@+id/sensor_list_row_layout_sensor_value"
-                android:textColor="#000"
+                android:textColor="#4a4a4a"
                 android:text="27.5 'C"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true">

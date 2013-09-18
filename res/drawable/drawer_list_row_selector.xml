@@ -13,14 +13,6 @@
                     android:endColor="#d0d0d2"
                     android:angle="270"/>
 
-            <corners
-                    android:bottomLeftRadius="5dp"
-                    android:topLeftRadius="5dp"
-                    android:bottomRightRadius="5dp"
-                    android:topRightRadius="5dp" />
-
-            <stroke android:width="1dip" android:color="#cdcbcb"/>
-
         </shape>
 
     </item>
@@ -37,14 +29,6 @@
                     android:startColor="#FFFFFF"
                     android:endColor="#FFFFFF"
                     android:angle="270"/>
-
-            <corners
-                    android:bottomLeftRadius="5dp"
-                    android:topLeftRadius="5dp"
-                    android:bottomRightRadius="5dp"
-                    android:topRightRadius="5dp" />
-
-            <stroke android:width="1dip" android:color="#cdcbcb"/>
 
         </shape>
 

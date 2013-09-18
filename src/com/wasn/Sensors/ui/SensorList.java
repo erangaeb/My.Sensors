@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.wasn.Sensors.R;
+import com.wasn.Sensors.application.SensorApplication;
 import com.wasn.Sensors.pojo.Sensor;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.Locale;
  * @author erangaeb@gmail.com (eranga herath)
  */
 public class SensorList extends Fragment implements SensorEventListener {
+    SensorApplication application;
 
     // use to populate list
     private ListView sensorListView;
@@ -51,15 +53,17 @@ public class SensorList extends Fragment implements SensorEventListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        application = (SensorApplication) getActivity().getApplication();
+
         // after created activity
         //  1. initialize sensor list
         //  2. initialize sensors
         //  3. create sensor list
         //  4. initialize location listener
-        initSensorLst();
-        initSensors();
         initSensorList();
+        initSensors();
         initLocationListener();
+        initSensorListView();
     }
 
     /**
@@ -71,6 +75,29 @@ public class SensorList extends Fragment implements SensorEventListener {
         initUI(root);
 
         return root;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        locationManager.removeUpdates(locationListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        locationManager.removeUpdates(locationListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // register for get location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
 
     /**
@@ -90,9 +117,13 @@ public class SensorList extends Fragment implements SensorEventListener {
      * Initialize sensor list to be display
      * Initially add location sensor to list
      */
-    private void initSensorLst() {
+    private void initSensorList() {
         sensorList = new ArrayList<Sensor>();
-        sensorList.add(new Sensor("Location", "NOT AVAILABLE", false));
+        if(application.getLocation().equalsIgnoreCase("NOT AVAILABLE")) {
+            sensorList.add(new Sensor("Location", application.getLocation(), false));
+        } else {
+            sensorList.add(new Sensor("Location", application.getLocation(), true));
+        }
     }
 
     /**
@@ -194,15 +225,13 @@ public class SensorList extends Fragment implements SensorEventListener {
             }
         };
 
-        // register for get location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
     }
 
     /**
      * Create sensor list
      */
-    private void initSensorList() {
+    private void initSensorListView() {
         // construct list adapter
         adapter = new SensorListAdapter(SensorList.this.getActivity(), sensorList);
         sensorListView.setAdapter(adapter);
@@ -327,9 +356,12 @@ public class SensorList extends Fragment implements SensorEventListener {
         @Override
         protected void onPostExecute(String address) {
             // add address lo sensor list
-            sensorList.get(0).setSensorValue(address);
-            sensorList.get(0).setAvailable(true);
-            adapter.reloadAdapter(sensorList);
+            if(!address.equalsIgnoreCase("NOT_AVAILABLE")) {
+                application.setLocation(address);
+                sensorList.get(0).setSensorValue(address);
+                sensorList.get(0).setAvailable(true);
+                adapter.reloadAdapter(sensorList);
+            }
         }
     }
 }
