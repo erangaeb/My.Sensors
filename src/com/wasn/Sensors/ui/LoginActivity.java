@@ -9,8 +9,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
-import de.tavendo.autobahn.WebSocket;
-import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketConnectionHandler;
 import de.tavendo.autobahn.WebSocketException;
 
