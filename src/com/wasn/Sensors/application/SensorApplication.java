@@ -1,6 +1,10 @@
 package com.wasn.Sensors.application;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Message;
+import de.tavendo.autobahn.WebSocket;
+import de.tavendo.autobahn.WebSocketConnection;
 
 
 /**
@@ -20,6 +24,11 @@ public class SensorApplication extends Application {
     public final static String MY_SENSORS = "MY_SENSORS";
     public final static String FRIENDS_SENSORS = "FRIENDS_SENSORS";
     public final static String SENSOR_TYPE = "SENSOR_TYPE";
+
+    public final static String WEB_SOCKET_URI = "ws://10.2.4.14:9000";
+
+    // web socket connection share in application
+    public final WebSocket webSocketConnection = new WebSocketConnection();
 
     public String getLocation() {
         return location;
@@ -48,6 +57,10 @@ public class SensorApplication extends Application {
         this.location = "NOT AVAILABLE";
     }
 
+    public WebSocket getWebSocketConnection() {
+        return webSocketConnection;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -58,4 +71,21 @@ public class SensorApplication extends Application {
         this.locationUpdateRequested = false;
     }
 
+    Handler handler = new Handler() {
+        public void handleMessage(Message message) {
+            if (realCallback!=null) {
+                realCallback.handleMessage(message);
+            }
+        }
+    };
+
+    Handler.Callback realCallback=null;
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setCallback(Handler.Callback c) {
+        realCallback = c;
+    }
 }

@@ -3,6 +3,8 @@ package com.wasn.Sensors.ui;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
@@ -25,12 +27,14 @@ import java.util.ArrayList;
  *
  * @author erangaeb@gmail.com (eranga herath)
  */
-public class HomeActivity extends FragmentActivity {
+public class HomeActivity extends FragmentActivity implements Handler.Callback {
 
     // drawer components
     private ListView drawerListView;
     private DrawerLayout drawerLayout;
     private HomeActionBarDrawerToggle homeActionBarDrawerToggle;
+
+    SensorApplication application;
 
     /**
      * {@inheritDoc}
@@ -40,10 +44,11 @@ public class HomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_layout);
 
+        application = (SensorApplication)this.getApplication();
+
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle("My.Sensors");
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -68,6 +73,8 @@ public class HomeActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
 
         getActionBar().setTitle("My.Sensors");
+
+        application.setCallback(this);
     }
 
     /**
@@ -76,7 +83,7 @@ public class HomeActivity extends FragmentActivity {
     private void initDrawer() {
         // initialize drawer content
         ArrayList<DrawerItem> drawerItemList = new ArrayList<DrawerItem>();
-        drawerItemList.add(new DrawerItem("MySensors", R.drawable.sensors));
+        drawerItemList.add(new DrawerItem("My.Sensors", R.drawable.sensors));
         drawerItemList.add(new DrawerItem("Friends.Sensors", R.drawable.share));
         drawerItemList.add(new DrawerItem("Friends", R.drawable.friends));
 
@@ -147,8 +154,24 @@ public class HomeActivity extends FragmentActivity {
             return true;
         }
 
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                // send some data to websocket
+                System.out.println("search");
+                application.getWebSocketConnection().sendTextMessage("We sending from home ");
+            case R.id.action_new:
+                application.setCallback(null);
+        }
+
         // Handle your other action bar items.
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean handleMessage(Message message) {
+        String payLoad = (String)message.obj;
+        System.out.println("payload --------------------" + payLoad);
+        return false;
     }
 
     /**
@@ -191,7 +214,7 @@ public class HomeActivity extends FragmentActivity {
             drawerListView.setItemChecked(position, true);
             drawerLayout.closeDrawer(drawerListView);
 
-           if(position == 0) {
+            if(position == 0) {
                SensorList fragment = new SensorList();
 
                // In case this activity was started with special instructions from an Intent,
@@ -230,6 +253,5 @@ public class HomeActivity extends FragmentActivity {
            }
 
         }
-
     }
 }

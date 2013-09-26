@@ -1,6 +1,7 @@
 package com.wasn.Sensors.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,6 +129,15 @@ public class SensorListAdapter extends BaseAdapter {
             view.setBackgroundResource(R.drawable.not_available_list_row_background);
             holder.share.setVisibility(View.GONE);
         }
+
+        holder.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // start share activity
+                Intent intent = new Intent(context, ShareActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
         return view;
     }

@@ -144,8 +144,6 @@ public class SensorList extends Fragment implements SensorEventListener {
         View footerView = View.inflate(this.getActivity(), R.layout.list_header, null);
         sensorListView.addHeaderView(headerView);
         sensorListView.addFooterView(footerView);
-
-
     }
 
     /**
