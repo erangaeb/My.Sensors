@@ -3,8 +3,6 @@ package com.wasn.Sensors.ui;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author erangaeb@gmail.com (eranga herath)
  */
-public class HomeActivity extends FragmentActivity implements Handler.Callback {
+public class HomeActivity extends FragmentActivity {
 
     // drawer components
     private ListView drawerListView;
@@ -73,8 +71,6 @@ public class HomeActivity extends FragmentActivity implements Handler.Callback {
         getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
 
         getActionBar().setTitle("My.Sensors");
-
-        application.setCallback(this);
     }
 
     /**
@@ -165,13 +161,6 @@ public class HomeActivity extends FragmentActivity implements Handler.Callback {
 
         // Handle your other action bar items.
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean handleMessage(Message message) {
-        String payLoad = (String)message.obj;
-        System.out.println("payload --------------------" + payLoad);
-        return false;
     }
 
     /**

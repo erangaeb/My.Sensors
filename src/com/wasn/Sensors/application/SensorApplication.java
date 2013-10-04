@@ -3,6 +3,8 @@ package com.wasn.Sensors.application;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Message;
+import com.wasn.Sensors.pojo.Sensor;
+import com.wasn.Sensors.pojo.User;
 import de.tavendo.autobahn.WebSocket;
 import de.tavendo.autobahn.WebSocketConnection;
 
@@ -14,9 +16,11 @@ import de.tavendo.autobahn.WebSocketConnection;
  */
 public class SensorApplication extends Application {
 
-    private boolean locationUpdateRequested;
+    // current sensor
+    Sensor currentSensor;
 
-    private String location;
+    // current user
+    User user;
 
     // determine sensor type
     //  1. my sensors
@@ -30,31 +34,28 @@ public class SensorApplication extends Application {
     // web socket connection share in application
     public final WebSocket webSocketConnection = new WebSocketConnection();
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public boolean isLocationUpdateRequested() {
-        return locationUpdateRequested;
-    }
-
-    public void setLocationUpdateRequested(boolean locationUpdateRequested) {
-        this.locationUpdateRequested = locationUpdateRequested;
-    }
-
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void onCreate() {
         super.onCreate();
+    }
 
-        this.location = "NOT AVAILABLE";
+    public Sensor getCurrentSensor() {
+        return currentSensor;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setCurrentSensor(Sensor currentSensor) {
+        this.currentSensor = currentSensor;
     }
 
     public WebSocket getWebSocketConnection() {
@@ -67,8 +68,6 @@ public class SensorApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-
-        this.locationUpdateRequested = false;
     }
 
     Handler handler = new Handler() {

@@ -36,7 +36,7 @@ public class SensorListAdapter extends BaseAdapter {
      * @param sensorList sharing user list
      */
     public SensorListAdapter(Context context, ArrayList<Sensor> sensorList) {
-        //application = (Pay2nApplication) context.getApplicationContext();
+        application = (SensorApplication) context.getApplicationContext();
 
         face = Typeface.createFromAsset(context.getAssets(), "fonts/vegur_2.otf");
 
@@ -133,6 +133,9 @@ public class SensorListAdapter extends BaseAdapter {
         holder.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // share current sensor in application
+                application.setCurrentSensor(sensor);
+
                 // start share activity
                 Intent intent = new Intent(context, ShareActivity.class);
                 context.startActivity(intent);
