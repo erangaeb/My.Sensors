@@ -63,9 +63,15 @@ public class HomeActivity extends FragmentActivity {
         // In case this activity was started with special instructions from an Intent,
         // pass the Intent's extras to the fragment as arguments
         // set MY_SENSOR argument
-        Bundle args = new Bundle();
-        args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
-        fragment.setArguments(args);
+        if(SensorApplication.SENSOR.equalsIgnoreCase(SensorApplication.MY_SENSORS)) {
+            Bundle args = new Bundle();
+            args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
+            fragment.setArguments(args);
+        } else {
+            Bundle args = new Bundle();
+            args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.FRIENDS_SENSORS);
+            fragment.setArguments(args);
+        }
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
@@ -154,9 +160,9 @@ public class HomeActivity extends FragmentActivity {
             case R.id.action_search:
                 // send some data to websocket
                 System.out.println("search");
-                application.getWebSocketConnection().sendTextMessage("We sending from home ");
+                application.getWebSocketConnection().disconnect();
             case R.id.action_new:
-                application.setCallback(null);
+                // application.setCallback(null);
         }
 
         // Handle your other action bar items.
@@ -204,42 +210,44 @@ public class HomeActivity extends FragmentActivity {
             drawerLayout.closeDrawer(drawerListView);
 
             if(position == 0) {
-               SensorList fragment = new SensorList();
+                SensorList fragment = new SensorList();
 
-               // In case this activity was started with special instructions from an Intent,
-               // pass the Intent's extras to the fragment as arguments
-               // set MY_SENSOR argument
-               Bundle args = new Bundle();
-               args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
-               fragment.setArguments(args);
+                // In case this activity was started with special instructions from an Intent,
+                // pass the Intent's extras to the fragment as arguments
+                // set MY_SENSOR argument
+                SensorApplication.SENSOR = SensorApplication.MY_SENSORS;
+                Bundle args = new Bundle();
+                args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.MY_SENSORS);
+                fragment.setArguments(args);
 
-               // Add the fragment to the 'fragment_container' FrameLayout
-               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
 
-               getActionBar().setTitle("My.Sensors");
+                getActionBar().setTitle("My.Sensors");
             } else if(position==1) {
-               SensorList fragment = new SensorList();
+                SensorList fragment = new SensorList();
 
-               // In case this activity was started with special instructions from an Intent,
-               // pass the Intent's extras to the fragment as arguments
-               // set MY_SENSOR argument
-               Bundle args = new Bundle();
-               args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.FRIENDS_SENSORS);
-               fragment.setArguments(args);
+                // In case this activity was started with special instructions from an Intent,
+                // pass the Intent's extras to the fragment as arguments
+                // set MY_SENSOR argument
+                SensorApplication.SENSOR = SensorApplication.FRIENDS_SENSORS;
+                Bundle args = new Bundle();
+                args.putString(SensorApplication.SENSOR_TYPE, SensorApplication.FRIENDS_SENSORS);
+                fragment.setArguments(args);
 
-               // Add the fragment to the 'fragment_container' FrameLayout
-               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
 
                getActionBar().setTitle("Friends.Sensors");
-           } else if(position==2) {
-               FriendList fragment = new FriendList();
-               fragment.setArguments(getIntent().getExtras());
+            } else if(position==2) {
+                FriendList fragment = new FriendList();
+                fragment.setArguments(getIntent().getExtras());
 
-               // Add the fragment to the 'fragment_container' FrameLayout
-               getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
 
-               getActionBar().setTitle("Friends");
-           }
+                getActionBar().setTitle("Friends");
+            }
 
         }
     }

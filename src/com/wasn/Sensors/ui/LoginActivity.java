@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
 import com.wasn.Sensors.pojo.User;
-import com.wasn.Sensors.service.WebSocketConnector;
 import com.wasn.Sensors.service.WebSocketService;
 
 /**
@@ -37,6 +36,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
         setContentView(R.layout.login);
 
         application = (SensorApplication) this.getApplication();
+
         initUI();
         application.setCallback(this);
     }
@@ -70,12 +70,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
 
             // open web socket and send username password fields
             // we are authenticate with web sockets
-            /*if(!application.getWebSocketConnection().isConnected()) {
-                new WebSocketConnector().connectToWebSocket(application);
-                //Intent intent = new Intent(this, WebSocketService.class);
-                //startService(intent);
-            }*/
-            switchToHome();
+            if(!application.getWebSocketConnection().isConnected()) {
+                Intent serviceIntent = new Intent(LoginActivity.this, WebSocketService.class);
+                startService(serviceIntent);
+            }
         }
     }
 
@@ -88,11 +86,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
     @Override
     public boolean handleMessage(Message message) {
         String payLoad = (String)message.obj;
+        System.out.println("PAYLOAD AT LOGIN " + payLoad);
 
         // successful login returns "Hello"
-        if(payLoad.equalsIgnoreCase("LOGIN_SUCCESS")) {
+        if(payLoad.equalsIgnoreCase("success")) {
             // un-register login activity from callback
-            //application.setCallback(null);
+            application.setCallback(null);
             Toast.makeText(LoginActivity.this, "Successfully login", Toast.LENGTH_LONG).show();
             switchToHome();
 

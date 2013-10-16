@@ -1,5 +1,6 @@
 package com.wasn.Sensors.pojo;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,9 +11,9 @@ import java.util.Map;
 public class Query {
     String command;
     String user;
-    Map<String, String> params;
+    HashMap<String, String> params;
 
-    public Query(String command, String user, Map<String, String> params) {
+    public Query(String command, String user, HashMap<String, String> params) {
         this.command = command;
         this.user = user;
         this.params = params;
@@ -30,7 +31,7 @@ public class Query {
         return params;
     }
 
-    public void setParams(Map<String, String> params) {
+    public void setParams(HashMap<String, String> params) {
         this.params = params;
     }
 
@@ -40,5 +41,10 @@ public class Query {
 
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    @Override
+    public String toString() {
+        return command + " " + user + " " + params.size();
     }
 }

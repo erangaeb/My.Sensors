@@ -4,9 +4,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.*;
 import android.os.AsyncTask;
@@ -34,7 +31,7 @@ import java.util.Locale;
  *
  * @author erangaeb@gmail.com (eranga herath)
  */
-public class ShareActivity extends Activity implements SensorEventListener, Handler.Callback {
+public class ShareActivity extends Activity {
 
     SensorApplication application;
 
@@ -47,13 +44,8 @@ public class ShareActivity extends Activity implements SensorEventListener, Hand
     Location lastKnowLocation;
     LocationListener locationListener;
 
-    // manager for sensors
-    private SensorManager sensorManager;
-
     // layout components
     EditText emailEditText;
-    TextView sensorNameTextView;
-    TextView sensorValueTextView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,40 +61,33 @@ public class ShareActivity extends Activity implements SensorEventListener, Hand
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         initUI();
-        initSensorManager(application.getCurrentSensor());
-        application.setCallback(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(locationManager!=null)
-            locationManager.removeUpdates(locationListener);
+        //if(locationManager!=null)
+            //locationManager.removeUpdates(locationListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(locationManager!=null)
-            locationManager.removeUpdates(locationListener);
+        //if(locationManager!=null)
+            //locationManager.removeUpdates(locationListener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if(locationManager != null) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         }
     }
 
     private void initUI() {
         emailEditText = (EditText) findViewById(R.id.share_layout_email_text);
-        sensorNameTextView = (TextView) findViewById(R.id.share_layout_sensor_name);
-        sensorValueTextView = (TextView) findViewById(R.id.share_layout_sensor_value);
-
-        // set sensor name according to current sensor
-        sensorNameTextView.setText(application.getCurrentSensor().getSensorName());
     }
 
     /**
@@ -140,12 +125,11 @@ public class ShareActivity extends Activity implements SensorEventListener, Hand
                 break;
             case R.id.action_share:
                 // share sensor data
-                String query = "SHARE" + " " + "#tp" + " " + "@"+emailEditText.getText().toString().trim();
+                String query = "SHARE" + " " + "#gps" + " " + "@"+emailEditText.getText().toString().trim();
                 if(application.getWebSocketConnection().isConnected())
                         application.getWebSocketConnection().sendTextMessage(query);
-                Toast.makeText(ShareActivity.this, "Successfully shared sensor", Toast.LENGTH_SHORT).show();
-                //finish();
-                break;
+                finish();
+                return false;
         }
 
         return super.onOptionsItemSelected(item);
@@ -175,93 +159,6 @@ public class ShareActivity extends Activity implements SensorEventListener, Hand
             public void onProviderDisabled(String provider) {
             }
         };
-    }
-
-    private void initSensorManager(com.wasn.Sensors.pojo.Sensor sensor) {
-        if(sensor.getSensorName().equals("Temperature")) {
-            sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE) , SensorManager.SENSOR_DELAY_NORMAL);
-        } else if(sensor.getSensorName().equals("Light")) {
-            sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT) , SensorManager.SENSOR_DELAY_NORMAL);
-        } else if(sensor.getSensorName().equals("Location")) {
-            initLocationListener();
-        } else if(sensor.getSensorName().equals("Pressure")) {
-            sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) , SensorManager.SENSOR_DELAY_NORMAL);
-        } else if(sensor.getSensorName().equals("Accelerometer")) {
-            sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) , SensorManager.SENSOR_DELAY_NORMAL);
-        } else if(sensor.getSensorName().equals("Gravity")) {
-            sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY) , SensorManager.SENSOR_DELAY_NORMAL);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        synchronized (this) {
-            switch (sensorEvent.sensor.getType()) {
-                case android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE:
-                    // set temperature
-                    // temperature sensor return only one value (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-                case android.hardware.Sensor.TYPE_LIGHT:
-                    // set light value
-                    // light sensor return only one value (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-                case android.hardware.Sensor.TYPE_PRESSURE:
-                    // set pressure
-                    // pressure sensor return only one value (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-                case android.hardware.Sensor.TYPE_RELATIVE_HUMIDITY:
-                    // set humidity
-                    // humidity sensor return only one value (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-                case android.hardware.Sensor.TYPE_ACCELEROMETER:
-                    // set accelerometer
-                    // use accelerometer only on x axis (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-                case android.hardware.Sensor.TYPE_GRAVITY:
-                    // set gravity
-                    // use gravity on y axis (values[1])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[1]));
-                    break;
-                case android.hardware.Sensor.TYPE_LINEAR_ACCELERATION:
-                    // set acceleration
-                    // use values of x axis (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-                case android.hardware.Sensor.TYPE_MAGNETIC_FIELD:
-                    // set magnetic field
-                    // use only value of x axis (values[0])
-                    sensorValueTextView.setText(Float.toString(sensorEvent.values[0]));
-                    break;
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onAccuracyChanged(android.hardware.Sensor sensor, int i) {
-    }
-
-    @Override
-    public boolean handleMessage(Message message) {
-        String payLoad = (String)message.obj;
-        System.out.println("payload share --------------------" + payLoad);
-        sensorValueTextView.setText(payLoad);
-        return false;
     }
 
     /**
@@ -319,7 +216,7 @@ public class ShareActivity extends Activity implements SensorEventListener, Hand
             // add address lo sensor list
             if(!address.equalsIgnoreCase("NOT_AVAILABLE")) {
                 // application.setLocation(address);
-                sensorValueTextView.setText(address);
+                // sensorValueTextView.setText(address);
             }
         }
     }

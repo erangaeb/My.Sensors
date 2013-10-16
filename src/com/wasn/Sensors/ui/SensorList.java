@@ -4,11 +4,14 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.wasn.Sensors.R;
@@ -22,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author erangaeb@gmail.com (eranga herath)
  */
-public class SensorList extends Fragment {
+public class SensorList extends Fragment implements Handler.Callback {
     SensorApplication application;
 
     // use to populate list
@@ -74,6 +77,9 @@ public class SensorList extends Fragment {
             initFriendsSensors();
             initSensorListView();
         }
+
+        // set call back
+        application.setCallback(this);
     }
 
     /**
@@ -116,6 +122,17 @@ public class SensorList extends Fragment {
         View footerView = View.inflate(this.getActivity(), R.layout.list_header, null);
         sensorListView.addHeaderView(headerView);
         sensorListView.addFooterView(footerView);
+
+        sensorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Sensor sensor = sensorList.get(0);
+
+                // send query to get data
+                if(application.getWebSocketConnection().isConnected())
+                    application.getWebSocketConnection().sendTextMessage("GET #gps " + sensor.getSensorName());
+            }
+        });
     }
 
     /**
@@ -148,7 +165,7 @@ public class SensorList extends Fragment {
         //  3. TYPE_PRESSURE - Ambient air pressure
         //  4. TYPE_RELATIVE_HUMIDITY - Ambient relative humidity
         // not using TYPE_TEMPERATURE since its deprecated
-        if(sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
+        /*if(sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
             sensorList.add(new Sensor("Temperature", "TEMPERATURE", true));
         } else {
             sensorList.add(new Sensor("Temperature", "NOT AVAILABLE", false));
@@ -195,13 +212,13 @@ public class SensorList extends Fragment {
             sensorList.add(new Sensor("Magnetic Field", "MAGNETIC FIELD", true));
         } else {
             sensorList.add(new Sensor("Magnetic Field", "NOT AVAILABLE", false));
-        }
+        }*/
 
         // TODO add other important sensors to list
     }
 
     private void initFriendsSensors() {
-        sensorList = new ArrayList<Sensor>();
+        sensorList = application.getFiendSensorList();
         //sensorList.add(new Sensor("Temperature @Vijitha", "27.5", true));
     }
 
@@ -217,4 +234,18 @@ public class SensorList extends Fragment {
             sensorListView.setEmptyView(emptyView);
         }
     }
+
+    @Override
+    public boolean handleMessage(Message message) {
+        String payLoad = (String)message.obj;
+        System.out.println("PAYLOAD AT SENSOR LIST " + payLoad);
+
+        // data query
+        // reload adapter to get new value
+        if(!payLoad.equalsIgnoreCase("fail"))
+            adapter.reloadAdapter(application.getFiendSensorList());
+
+        return false;
+    }
+
 }

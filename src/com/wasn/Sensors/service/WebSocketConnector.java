@@ -1,8 +1,11 @@
 package com.wasn.Sensors.service;
 
-import android.content.Intent;
 import android.os.Message;
 import com.wasn.Sensors.application.SensorApplication;
+import com.wasn.Sensors.exceptions.InvalidQueryException;
+import com.wasn.Sensors.pojo.Query;
+import com.wasn.Sensors.pojo.Sensor;
+import com.wasn.Sensors.utils.QueryParser;
 import de.tavendo.autobahn.WebSocketConnectionHandler;
 import de.tavendo.autobahn.WebSocketException;
 
@@ -47,40 +50,65 @@ public class WebSocketConnector {
     }
 
     /**
-     * Handle message from websocket
+     * Handle message from web socket
      *
      * @param application application object
      * @param payload payload from server
      */
     private void handleMessage(SensorApplication application, String payload) {
-        System.out.println("payload -------" + payload);
-        // TODO use query parser to parser query
+        try {
+            // parse payload and get Query
+            Query query = QueryParser.parse(payload);
+            System.out.println("--------------------" + payload);
 
-        // if messages except "Goodbye" or "Welcome" (except login message) we have to handle it via another thread
-        // another thread need to handle tp process query/ query response
-        if(payload.equalsIgnoreCase("LOGIN_SUCCESS") || payload.equalsIgnoreCase("LOGIN_FAIL")) {
-            // Login request message
-            Message message = Message.obtain();
-            message.obj = payload;
-            if (application.getHandler()!=null)
-                application.getHandler().sendMessage(message);
-        } else {
-            // Query result or Share request
-            /*Message message = Message.obtain();
-            message.obj = payload;
-            if (application.getHandler()!=null)
-                application.getHandler().sendMessage(message);*/
-            //if(!payload.equalsIgnoreCase("SHARE_SUCCESS")) {
-            //Intent intent = new Intent(application.getApplicationContext(), LocationService.class);
-            //application.getApplicationContext().startService(intent);
-            //}
-            new LocationTask(application).execute("GET");
+            // if messages except "Goodbye" or "Welcome" (except login message) we have to handle it via another thread
+            // another thread need to handle tp process query/ query response
+            if(payload.equalsIgnoreCase("LOGIN_SUCCESS") || payload.equalsIgnoreCase("LOGIN_FAIL")) {
+                // Login request message
+                Message message = Message.obtain();
+                message.obj = payload;
+                if (application.getHandler()!=null)
+                    application.getHandler().sendMessage(message);
+            } else if(payload.startsWith("SHARE_SUCCESS") || payload.startsWith("SHARE_FAIL")) {
+                // sharing status
+                // ignore here
+                System.out.println("SHARE SUCCESS/FAIL");
+                System.out.println("Payload " + payload);
+            } else if(payload.startsWith("SHARE")) {
+                // share query
+                // need to add new sensor to sensor list share in application
+                application.getFiendSensorList().add(new Sensor(query.getUser(), "TAP HERE", false));
+            } else if(payload.startsWith("GET")) {
+                // get query
+                // get location and send to user
+                // send dummy location now
+                // TODO start location manager to mange location functions
+                if(application.getWebSocketConnection().isConnected()) {
+                    // get  user from query
+                    // temporary solution
+                    String user = query.getUser();
+                    String response = "DATA" + " " + "#gps" + " " + application.getRandomLocation() + " " + user;
+                    application.getWebSocketConnection().sendTextMessage(response);
+                }
+            } else if(payload.startsWith("DATA")) {
+                // data response from peer
+                // update fried sensor value as well
+                application.getFiendSensorList().get(0).setSensorValue(query.getUser());
 
-            System.out.println("started------");
+                // send data to available handlers
+                Message message = Message.obtain();
+                message.obj = payload;
+                if (application.getHandler()!=null)
+                    application.getHandler().sendMessage(message);
+            } else {
+                System.out.println("case elsessssssss");
+                System.out.println("Payload " + payload);
+                // start location task to get location
+                // new LocationTask(application).execute("GET");
+            }
+        } catch (InvalidQueryException e) {
+            System.out.println(e.toString());
         }
     }
 
-    private void getCurrentLocation() {
-
-    }
 }
