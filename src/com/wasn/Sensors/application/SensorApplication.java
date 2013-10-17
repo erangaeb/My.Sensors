@@ -33,7 +33,6 @@ public class SensorApplication extends Application {
     //  2. friends sensors
     public final static String MY_SENSORS = "MY_SENSORS";
     public final static String FRIENDS_SENSORS = "FRIENDS_SENSORS";
-    public final static String SENSOR_TYPE = "SENSOR_TYPE";
     public static String SENSOR = MY_SENSORS;
 
     public final static String WEB_SOCKET_URI = "ws://10.2.4.14:9000";

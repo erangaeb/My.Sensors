@@ -9,11 +9,13 @@ public class Sensor {
     String sensorName;
     String sensorValue;
     boolean isAvailable;
+    boolean isMySensor;
 
-    public Sensor(String sensorName, String sensorValue, boolean available) {
+    public Sensor(String sensorName, String sensorValue, boolean available, boolean isMySensor) {
         this.sensorName = sensorName;
         this.sensorValue = sensorValue;
-        isAvailable = available;
+        this.isAvailable = available;
+        this.isMySensor = isMySensor;
     }
 
     public String getSensorName() {
@@ -38,5 +40,13 @@ public class Sensor {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public boolean isMySensor() {
+        return isMySensor;
+    }
+
+    public void setMySensor(boolean mySensor) {
+        isMySensor = mySensor;
     }
 }

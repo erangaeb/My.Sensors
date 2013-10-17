@@ -6,11 +6,8 @@
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="18"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-   <!-- <service android:name="com.wasn.Sensors.service.WebSocketService" />-->
-   <!-- <service android:name="com.wasn.Sensors.service.LocationService" />-->
 
     <application
         android:label="@string/app_name"
@@ -47,6 +44,8 @@
         </activity>
 
         <service android:enabled="true" android:name=".service.WebSocketService" />
+        <service android:enabled="true" android:name=".service.GpsReadingService" />
+        <service android:enabled="true" android:name=".service.LocationService" />
 
     </application>
 </manifest> 

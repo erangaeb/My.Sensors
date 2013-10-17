@@ -199,11 +199,11 @@ public class WebSocketService extends Service {
      */
     private void handleShareQuery(SensorApplication application, Query query) {
         // add new sensor to friend sensor list that shared in application
-        // add sensor test as 'TAP HERE' since user can tap and get sensor data from matching user
-        application.getFiendSensorList().add(new Sensor("Location @" + query.getUser(), "TAP HERE", false));
+        // add sensor test as 'TAP HERE' since user can tap and get sensor data ap Heretching user
+        application.getFiendSensorList().add(new Sensor("Location @" + query.getUser(), "Tap Here", false, false));
 
         // update notification to notify user about incoming query/ share request
-        updateNotification("SHARE");
+        updateNotification("Location @" + query.getUser());
     }
 
     /**
@@ -237,7 +237,7 @@ public class WebSocketService extends Service {
      */
     private void handleDataQuery(SensorApplication application, Query query) {
         // when data receives update matching sensor(at friend sensor list) with incoming sensor value
-        // TODO implement sensor update login,
+        // TODO implement sensor update logic,
         // TODO currently we update first sensor by assuming we have only one shared sensor available
         application.getFiendSensorList().get(0).setSensorValue(query.getParams().get("gps"));
 
@@ -283,8 +283,8 @@ public class WebSocketService extends Service {
 
         // Build notification
         // Actions are just fake
-        builder.setContentTitle("My.Sensors")
-               .setContentText("Started My.Sensors").setSmallIcon(R.drawable.google_plus)
+        builder.setContentTitle("SenZors")
+               .setContentText("Touch for launch SenZors").setSmallIcon(R.drawable.google_plus)
                .setContentIntent(resultPendingIntent).build();
 
         Notification notification = builder.build();
@@ -297,16 +297,16 @@ public class WebSocketService extends Service {
     /**
      * Create and update notification when query receives from server
      * No we have two notifications regarding Sensor application
-     * @param query incoming query
+     * @param message incoming query
      */
-    private void updateNotification(String query) {
+    private void updateNotification(String message) {
         SensorApplication.SENSOR = SensorApplication.FRIENDS_SENSORS;
 
         Intent notificationIntent = new Intent(this, HomeActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        builder.setContentTitle("Received query");
-        builder.setContentText(query);
+        builder.setContentTitle("New SenZ");
+        builder.setContentText(message);
         builder.setContentIntent(contentIntent);
 
         Notification notification = builder.build();
