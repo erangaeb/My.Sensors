@@ -109,6 +109,7 @@ public class QueryParser {
             System.out.println(QueryParser.getMessage(QueryParser.parse("LOGIN #status success")));
             System.out.println(QueryParser.getMessage(QueryParser.parse("STATUS #share success")));
             System.out.println(QueryParser.getMessage(QueryParser.parse("STATUS #login fail")));
+            System.out.println(QueryParser.getMessage(QueryParser.parse("DATA #lat 345345 #lon 34545 @user2")));
         } catch (InvalidQueryException e) {
             System.out.println(e.toString());
         }

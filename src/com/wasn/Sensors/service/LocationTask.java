@@ -38,25 +38,30 @@ public class LocationTask extends AsyncTask implements LocationListener {
         // the current thread.
         System.out.println("getting location");
         //locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
-        Looper.loop(); // start waiting...when this is done, we'll have the location in this.location
+        lastKnowLocation = locationManager.getLastKnownLocation(LOCATION_PROVIDER);
+        //locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+        //Looper.loop(); // start waiting...when this is done, we'll have the location in this.location
         // location available
         System.out.println("location got");
 
-        return null;
+        return lastKnowLocation;
     }
 
     @Override
     protected void onPostExecute(Object result) {
         // notify someone we are done...
+        Location loc = (Location) result;
+        System.out.println("send location");
+        application.getWebSocketConnection().sendTextMessage(Double.toString(loc.getLatitude()));
+        locationManager.removeUpdates(this);
     }
 
     @Override
     public void onLocationChanged(Location location) {
         // Store the location, then get the current thread's looper and tell it to
         // quit looping so it can continue on doing work with the new location.
-        this.location = location;
-        Looper.myLooper().quit();
+        //this.location = location;
+        //Looper.myLooper().quit();
     }
 
     @Override

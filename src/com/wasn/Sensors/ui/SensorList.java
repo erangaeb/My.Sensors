@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
 import com.wasn.Sensors.pojo.Sensor;
+import com.wasn.Sensors.service.GpsReadingService;
 import com.wasn.Sensors.service.LocationService;
 
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ public class SensorList extends Fragment implements Handler.Callback {
 
                 if(sensor.isMySensor()) {
                     // start location service to get my location
-                    Intent serviceIntent = new Intent(getActivity(), LocationService.class);
+                    Intent serviceIntent = new Intent(getActivity(), GpsReadingService.class);
                     getActivity().startService(serviceIntent);
                 } else {
                     // friend sensor

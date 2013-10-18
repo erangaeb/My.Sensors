@@ -9,11 +9,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
 
-public class GpsReadingService extends Service implements LocationListener,
-                                                            GooglePlayServicesClient.ConnectionCallbacks,
-                                                            GooglePlayServicesClient.OnConnectionFailedListener {
+public class GpsReadingService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
+                                                                GooglePlayServicesClient.OnConnectionFailedListener {
 
     private LocationClient locationClient;
 
@@ -61,27 +59,19 @@ public class GpsReadingService extends Service implements LocationListener,
 
         if(location!=null) {
             System.out.println("###################################");
+            System.out.println("***********************************");
             System.out.println("//////// " + location.getLatitude());
             System.out.println("//////// " + location.getLongitude());
             System.out.println("###################################");
         }
+
+        stopSelf();
     }
 
     @Override
     public void onDisconnected() {
         System.out.println("###################################");
         System.out.println("////////LocationDisconnected///////");
-        System.out.println("###################################");
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        System.out.println("###################################");
-        System.out.println("//////// " + latitude);
-        System.out.println("//////// " + longitude);
         System.out.println("###################################");
     }
 
@@ -111,7 +101,6 @@ public class GpsReadingService extends Service implements LocationListener,
         System.out.println("/////LocationService Destroyed/////");
         System.out.println("###################################");
 
-        locationClient.removeLocationUpdates(this);
         super.onDestroy();
     }
 }

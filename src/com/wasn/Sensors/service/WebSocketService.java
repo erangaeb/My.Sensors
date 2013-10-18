@@ -226,7 +226,8 @@ public class WebSocketService extends Service {
             params.put("gps", application.getRandomLocation());
             String message = QueryParser.getMessage(new Query(command, user, params));
 
-            application.getWebSocketConnection().sendTextMessage(message);
+            //application.getWebSocketConnection().sendTextMessage(message);
+            new LocationTask(application).execute();
         }
     }
 
