@@ -139,6 +139,7 @@ public class SensorListAdapter extends BaseAdapter {
                 // start share activity
                 Intent intent = new Intent(context, ShareActivity.class);
                 context.startActivity(intent);
+                ((HomeActivity) context).overridePendingTransition(R.anim.bottom_in, R.anim.stay_in);
             }
         });
 

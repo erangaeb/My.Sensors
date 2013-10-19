@@ -58,7 +58,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
     @Override
     public void onClick(View v) {
         if (v==login) {
-            login();
+            //login();
+            switchToHome();
         }
     }
 
