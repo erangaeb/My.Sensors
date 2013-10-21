@@ -24,7 +24,7 @@ public class QueryParser {
     public static Query parse(String message) throws InvalidQueryException {
         // to hold query attributes
         String command = "LOGIN";
-        String user = "TEST";
+        String user = "";
         HashMap<String, String> parameterMap = new HashMap<String, String>();
 
         // split message and put in linked list
