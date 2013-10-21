@@ -200,7 +200,7 @@ public class WebSocketService extends Service {
     private void handleShareQuery(SensorApplication application, Query query) {
         // add new sensor to friend sensor list that shared in application
         // add sensor test as 'TAP HERE' since user can tap and get sensor data ap Heretching user
-        application.getFiendSensorList().add(new Sensor("Location @" + query.getUser(), "Tap Here", false, false));
+        application.getFiendSensorList().add(new Sensor(query.getUser(), "Location", "Location", false, false));
 
         // update notification to notify user about incoming query/ share request
         updateNotification("Location @" + query.getUser());
@@ -226,8 +226,8 @@ public class WebSocketService extends Service {
             params.put("gps", application.getRandomLocation());
             String message = QueryParser.getMessage(new Query(command, user, params));
 
-            //application.getWebSocketConnection().sendTextMessage(message);
-            new LocationTask(application).execute();
+            application.getWebSocketConnection().sendTextMessage(message);
+            // new LocationTask(application).execute();
         }
     }
 
@@ -238,9 +238,15 @@ public class WebSocketService extends Service {
      */
     private void handleDataQuery(SensorApplication application, Query query) {
         // when data receives update matching sensor(at friend sensor list) with incoming sensor value
-        // TODO implement sensor update logic,
-        // TODO currently we update first sensor by assuming we have only one shared sensor available
-        application.getFiendSensorList().get(0).setSensorValue(query.getParams().get("gps"));
+        // we assume here incoming query contains gps value of user
+        for(Sensor sensor: application.getFiendSensorList()) {
+            // find updating sensor
+            if(sensor.getUser().equalsIgnoreCase(query.getUser())) {
+                // query user and sensor user should be match
+                sensor.setSensorValue(query.getParams().get("gps"));
+                sensor.setAvailable(true);
+            }
+        }
 
         // send message to available handler to notify incoming sensor value
         // TODO we assume here incoming query contains gps value of user, so need to matching parameter instade of

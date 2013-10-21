@@ -124,14 +124,14 @@ public class SensorList extends Fragment implements Handler.Callback {
 
                 if(sensor.isMySensor()) {
                     // start location service to get my location
-                    Intent serviceIntent = new Intent(getActivity(), GpsReadingService.class);
+                    Intent serviceIntent = new Intent(getActivity(), LocationService.class);
                     getActivity().startService(serviceIntent);
                 } else {
                     // friend sensor
                     // so need to get request to server
                     // send query to get data
                     if(application.getWebSocketConnection().isConnected())
-                        application.getWebSocketConnection().sendTextMessage("GET #gps " + sensor.getSensorName());
+                        application.getWebSocketConnection().sendTextMessage("GET #gps " + "@" + sensor.getUser());
                 }
             }
         });
@@ -158,13 +158,15 @@ public class SensorList extends Fragment implements Handler.Callback {
         sensorList = new ArrayList<Sensor>();
 
         // initially add location sensor
-        sensorList.add(new Sensor("My.Location", "Tap Here", true, true));
+        //sensorList.add(new Sensor(application.getUser().getUsername(), "Location", "Location", true, false));
+        sensorList.add(new Sensor("I'm", "Location", "Location", true, false));
 
         // TODO add other important sensors to list
     }
 
     private void initFriendsSensors() {
         sensorList = application.getFiendSensorList();
+        //sensorList.add(new Sensor("Vijitha", "Location", "Location", false, false));
     }
 
     /**

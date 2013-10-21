@@ -102,12 +102,12 @@ public class SensorListAdapter extends BaseAdapter {
 
             //create view holder to store reference to child views
             holder = new ViewHolder();
-            holder.sensorName = (TextView) view.findViewById(R.id.sensor_list_row_layout_sensor_name);
+            holder.sensorUser = (TextView) view.findViewById(R.id.sensor_list_row_layout_sensor_user);
             holder.sensorValue = (TextView) view.findViewById(R.id.sensor_list_row_layout_sensor_value);
             holder.share = (RelativeLayout) view.findViewById(R.id.sensor_list_row_layout_share);
 
             // set custom font
-            holder.sensorName.setTypeface(face);
+            holder.sensorUser.setTypeface(face);
             holder.sensorValue.setTypeface(face);
 
             view.setTag(holder);
@@ -116,18 +116,11 @@ public class SensorListAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        // bind text with view holder content view for efficient use
-        holder.sensorName.setText(sensor.getSensorName());
-        holder.sensorValue.setText(sensor.getSensorValue());
-
-        // different color for not available sensors
-        // disable share
-        if(sensor.isAvailable()) {
-            view.setBackgroundResource(R.drawable.list_row_background);
-            holder.share.setVisibility(View.VISIBLE);
+        // handle my/friend sensors
+        if(sensor.isMySensor()) {
+            setUpMySensor(sensor, view, holder);
         } else {
-            view.setBackgroundResource(R.drawable.not_available_list_row_background);
-            holder.share.setVisibility(View.GONE);
+            setUpFriendSensor(sensor, view, holder);
         }
 
         holder.share.setOnClickListener(new View.OnClickListener() {
@@ -146,11 +139,39 @@ public class SensorListAdapter extends BaseAdapter {
         return view;
     }
 
+    private void setUpMySensor(Sensor sensor, View view, ViewHolder viewHolder) {
+        // enable share and change color of view
+        view.setBackgroundResource(R.drawable.my_sensor_background);
+        viewHolder.share.setVisibility(View.VISIBLE);
+
+        if(sensor.isAvailable()) {
+            viewHolder.sensorUser.setText(sensor.getUser() + " at");
+            viewHolder.sensorValue.setText(sensor.getSensorValue());
+        } else {
+            viewHolder.sensorUser.setText(sensor.getUser() + " at");
+            viewHolder.sensorValue.setText(R.string.tap_here);
+        }
+    }
+
+    private void setUpFriendSensor(Sensor sensor, View view, ViewHolder viewHolder) {
+        // disable share and change color of view
+        view.setBackgroundResource(R.drawable.friend_sensor_background);
+        viewHolder.share.setVisibility(View.GONE);
+
+        if(sensor.isAvailable()) {
+            viewHolder.sensorUser.setText(sensor.getUser() + " at");
+            viewHolder.sensorValue.setText(sensor.getSensorValue());
+        } else {
+            viewHolder.sensorUser.setText(sensor.getUser() + " at");
+            viewHolder.sensorValue.setText(R.string.tap_here);
+        }
+    }
+
     /**
      * Keep reference to children view to avoid unnecessary calls
      */
     static class ViewHolder {
-        TextView sensorName;
+        TextView sensorUser;
         TextView sensorValue;
         RelativeLayout share;
     }

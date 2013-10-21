@@ -77,7 +77,7 @@ public class WebSocketConnector {
             } else if(payload.startsWith("SHARE")) {
                 // share query
                 // need to add new sensor to sensor list share in application
-                application.getFiendSensorList().add(new Sensor(query.getUser(), "TAP HERE", false, false));
+                application.getFiendSensorList().add(new Sensor(query.getUser(), "Location" , "Location", false, false));
             } else if(payload.startsWith("GET")) {
                 // get query
                 // get location and send to user

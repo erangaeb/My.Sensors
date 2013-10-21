@@ -2,6 +2,8 @@ package com.wasn.Sensors.ui;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -49,6 +51,7 @@ public class HomeActivity extends FragmentActivity {
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#161515")));
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -203,7 +206,7 @@ public class HomeActivity extends FragmentActivity {
         // and add the transaction to the back stack so the user can navigate back
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main, sensorListFragment);
-        transaction.addToBackStack(null);
+        //transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -218,7 +221,7 @@ public class HomeActivity extends FragmentActivity {
         // and add the transaction to the back stack so the user can navigate back
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main, friendListFragment);
-        transaction.addToBackStack(null);
+        //transaction.addToBackStack(null);
         transaction.commit();
     }
 }

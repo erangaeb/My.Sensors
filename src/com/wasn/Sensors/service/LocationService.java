@@ -59,7 +59,7 @@ public class LocationService extends Service {
         System.out.println("###################################");
     }
 
-    public class LocListener implements LocationListener{
+    public class LocListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
             System.out.println("###################################");
