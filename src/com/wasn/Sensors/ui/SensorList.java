@@ -19,7 +19,6 @@ import com.wasn.Sensors.pojo.LatLon;
 import com.wasn.Sensors.pojo.Sensor;
 import com.wasn.Sensors.service.GetAddressTask;
 import com.wasn.Sensors.service.GpsReadingService;
-import com.wasn.Sensors.service.LocationService;
 
 import java.util.ArrayList;
 
@@ -188,10 +187,8 @@ public class SensorList extends Fragment implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message message) {
-        System.out.println("handle lat lon");
         if(message.obj instanceof LatLon) {
             // get address from location
-            System.out.println("get location");
             LatLon latLon = (LatLon) message.obj;
             new GetAddressTask(SensorList.this).execute(latLon);
         } else if(message.obj instanceof String) {
@@ -211,7 +208,7 @@ public class SensorList extends Fragment implements Handler.Callback {
         return false;
     }
 
-    public void onPostAddress(String address) {
+    public void onPostAddressTask(String address) {
         // when data receives update matching sensor(at friend sensor list) with incoming sensor value
         // we assume here incoming query contains gps value of user
         for(Sensor sensor: application.getFiendSensorList()) {

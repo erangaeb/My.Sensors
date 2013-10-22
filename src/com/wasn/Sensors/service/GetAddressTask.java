@@ -3,7 +3,6 @@ package com.wasn.Sensors.service;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.AsyncTask;
 import com.wasn.Sensors.pojo.LatLon;
 import com.wasn.Sensors.ui.SensorList;
@@ -22,7 +21,6 @@ public class GetAddressTask extends AsyncTask<LatLon, String, String> {
     SensorList sensorList;
     Context mContext;
     public GetAddressTask(SensorList sensorList) {
-        System.out.println("addres task");
         this.sensorList = sensorList;
         mContext = sensorList.getActivity();
     }
@@ -38,8 +36,6 @@ public class GetAddressTask extends AsyncTask<LatLon, String, String> {
      */
     @Override
     protected String doInBackground(LatLon... params) {
-        System.out.println("do in back addres task");
-
         // get location params
         Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
         LatLon latLon = params[0];
@@ -78,7 +74,7 @@ public class GetAddressTask extends AsyncTask<LatLon, String, String> {
 
         // add address lo sensor list
         if(!address.equalsIgnoreCase("NOT_AVAILABLE")) {
-            sensorList.onPostAddress(address);
+            sensorList.onPostAddressTask(address);
         }
     }
 }
