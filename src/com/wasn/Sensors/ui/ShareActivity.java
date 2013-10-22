@@ -3,13 +3,16 @@ package com.wasn.Sensors.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
+import com.wasn.Sensors.utils.ActivityUtils;
 
 /**
  * Activity class for sharing
@@ -17,7 +20,7 @@ import com.wasn.Sensors.application.SensorApplication;
  *
  * @author erangaeb@gmail.com (eranga herath)
  */
-public class ShareActivity extends Activity {
+public class ShareActivity extends Activity implements Handler.Callback {
 
     SensorApplication application;
 
@@ -29,6 +32,7 @@ public class ShareActivity extends Activity {
         setContentView(R.layout.share_layout);
 
         application = (SensorApplication) getApplication();
+        application.setCallback(this);
 
         // Set up action bar.
         final ActionBar actionBar = getActionBar();
@@ -49,12 +53,14 @@ public class ShareActivity extends Activity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.share_menu, menu);
+        getMenuInflater().inflate(R.menu.share_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -63,6 +69,7 @@ public class ShareActivity extends Activity {
                 NavUtils.navigateUpFromSameTask(this);
                 ShareActivity.this.overridePendingTransition(R.anim.stay_in, R.anim.bottom_out);
 
+                ActivityUtils.hideSoftKeyboard(this);
                 return true;
             case R.id.action_share:
                 // share sensor data
@@ -71,17 +78,43 @@ public class ShareActivity extends Activity {
                 if(application.getWebSocketConnection().isConnected())
                     application.getWebSocketConnection().sendTextMessage(query);
 
-                super.onBackPressed();
-                ShareActivity.this.overridePendingTransition(R.anim.stay_in, R.anim.bottom_out);
+                ActivityUtils.hideSoftKeyboard(this);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         ShareActivity.this.overridePendingTransition(R.anim.stay_in, R.anim.bottom_out);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean handleMessage(Message message) {
+        // we handle string messages only from here
+        if(message.obj instanceof String) {
+            String payLoad = (String)message.obj;
+
+            // successful login returns "Hello"
+            if(payLoad.equalsIgnoreCase("success")) {
+                Toast.makeText(ShareActivity.this, "Sensor has been shared successfully", Toast.LENGTH_LONG).show();
+                ShareActivity.this.finish();
+                ShareActivity.this.overridePendingTransition(R.anim.stay_in, R.anim.bottom_out);
+
+                return true;
+            } else {
+                Toast.makeText(ShareActivity.this, "Sharing fail", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        return false;
     }
 }

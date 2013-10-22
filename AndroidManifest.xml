@@ -12,7 +12,7 @@
 
     <application
         android:label="@string/app_name"
-        android:icon="@drawable/google_plus1"
+        android:icon="@drawable/app_icon121"
         android:name="com.wasn.Sensors.application.SensorApplication">
 
         <activity

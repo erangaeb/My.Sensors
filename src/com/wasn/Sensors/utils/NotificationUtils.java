@@ -48,7 +48,7 @@ public class NotificationUtils {
 
         // Build notification
         builder.setContentTitle("SenZors")
-                .setContentText("Touch for launch SenZors").setSmallIcon(R.drawable.google_plus)
+                .setContentText("Touch for launch SenZors").setSmallIcon(R.drawable.app_icon121)
                 .setContentIntent(resultPendingIntent).build();
 
         Notification notification = builder.build();

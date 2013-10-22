@@ -50,8 +50,7 @@ public class GpsReadingService extends Service implements GooglePlayServicesClie
         // Create the LocationRequest object
         locationRequest = LocationRequest.create();
         // Use high accuracy
-        locationRequest.setPriority(
-                LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         // Set the update interval to 5 seconds
         locationRequest.setInterval(UPDATE_INTERVAL);
         // Set the fastest update interval to 1 second
