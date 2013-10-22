@@ -3,6 +3,7 @@ package com.wasn.Sensors.application;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Message;
+import com.wasn.Sensors.pojo.Query;
 import com.wasn.Sensors.pojo.Sensor;
 import com.wasn.Sensors.pojo.User;
 import de.tavendo.autobahn.WebSocket;
@@ -35,11 +36,19 @@ public class SensorApplication extends Application {
     public final static String FRIENDS_SENSORS = "FRIENDS_SENSORS";
     public static String SENSOR = MY_SENSORS;
 
-    public final static String WEB_SOCKET_URI = "ws://10.2.4.14:9000";
-    //public final static String WEB_SOCKET_URI = "ws://mysensors.ucsc.lk:9000";
+    //public final static String WEB_SOCKET_URI = "ws://10.2.4.14:9000";
+    public final static String WEB_SOCKET_URI = "ws://mysensors.ucsc.lk:9000";
 
     // web socket connection share in application
     public final WebSocket webSocketConnection = new WebSocketConnection();
+
+    // track weather request is from from web socket service or activity
+    private boolean isServiceRequest = true;
+
+    // incoming query from server
+    private Query query;
+
+    private Query currentDataQuery;
 
     /**
      * {@inheritDoc}
@@ -112,5 +121,29 @@ public class SensorApplication extends Application {
         Random random = new Random(); //Create random class object
         int randomNumber = random.nextInt(locations.size()); //Generate a random number (index) with the size of the list being the maximum
         return locations.get(randomNumber);
+    }
+
+    public boolean isServiceRequest() {
+        return isServiceRequest;
+    }
+
+    public void setServiceRequest(boolean serviceRequest) {
+        isServiceRequest = serviceRequest;
+    }
+
+    public Query getQuery() {
+        return query;
+    }
+
+    public void setQuery(Query query) {
+        this.query = query;
+    }
+
+    public Query getCurrentDataQuery() {
+        return currentDataQuery;
+    }
+
+    public void setCurrentDataQuery(Query currentDataQuery) {
+        this.currentDataQuery = currentDataQuery;
     }
 }

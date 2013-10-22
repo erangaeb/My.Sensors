@@ -8,6 +8,7 @@ import android.os.Message;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
 import com.wasn.Sensors.exceptions.InvalidQueryException;
+import com.wasn.Sensors.pojo.LatLon;
 import com.wasn.Sensors.pojo.Query;
 import com.wasn.Sensors.pojo.Sensor;
 import com.wasn.Sensors.ui.HomeActivity;
@@ -217,17 +218,14 @@ public class WebSocketService extends Service {
         // currently send query with dummy location
         // TODO start location manager to mange location functions
         if(application.getWebSocketConnection().isConnected()) {
-            // generate query message
-            // send it to server
-            // TODO get real location instead of dummy location
-            String command = "DATA";
-            String user = query.getUser();
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("gps", application.getRandomLocation());
-            String message = QueryParser.getMessage(new Query(command, user, params));
 
-            application.getWebSocketConnection().sendTextMessage(message);
-            // new LocationTask(application).execute();
+
+            // current location request is from websocket service
+            // start location service
+            application.setServiceRequest(true);
+            application.setQuery(query);
+            Intent serviceIntent = new Intent(this, GpsReadingService.class);
+            startService(serviceIntent);
         }
     }
 
@@ -237,21 +235,24 @@ public class WebSocketService extends Service {
      * @param query parsed query
      */
     private void handleDataQuery(SensorApplication application, Query query) {
-        // when data receives update matching sensor(at friend sensor list) with incoming sensor value
+        // create lat lon object from query params
+        // we assume incoming query contains lat lon values
+        LatLon latLon = new LatLon(query.getParams().get("lat"), query.getParams().get("lon"));
+        application.setCurrentDataQuery(query);
+
+        /*// when data receives update matching sensor(at friend sensor list) with incoming sensor value
         // we assume here incoming query contains gps value of user
         for(Sensor sensor: application.getFiendSensorList()) {
             // find updating sensor
             if(sensor.getUser().equalsIgnoreCase(query.getUser())) {
                 // query user and sensor user should be match
-                sensor.setSensorValue(query.getParams().get("gps"));
+                sensor.setSensorValue(query.getParams().get("lat") + "," + query.getParams().get("lon"));
                 sensor.setAvailable(true);
             }
-        }
+        }*/
 
         // send message to available handler to notify incoming sensor value
-        // TODO we assume here incoming query contains gps value of user, so need to matching parameter instade of
-        // TODO adding 'gps'
-        sendMessage(application, query.getParams().get("gps"), false);
+        sendLatLonMessage(application, latLon);
     }
 
     /**
@@ -267,6 +268,21 @@ public class WebSocketService extends Service {
             application.getHandler().sendMessage(message);
             if (updateNotification)
                 updateNotification(payload);
+        }
+    }
+
+    /**
+     * Send message to appropriate handler in sensor list
+     * @param application application
+     * @param latLon object too handler
+     */
+    private void sendLatLonMessage(SensorApplication application, LatLon latLon) {
+        System.out.println("init lat lon message");
+        Message message = Message.obtain();
+        message.obj = latLon;
+        if (application.getHandler()!=null) {
+            System.out.println("send lat lon message");
+            application.getHandler().sendMessage(message);
         }
     }
 

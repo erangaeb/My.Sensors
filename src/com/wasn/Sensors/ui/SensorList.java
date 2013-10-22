@@ -15,7 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.wasn.Sensors.R;
 import com.wasn.Sensors.application.SensorApplication;
+import com.wasn.Sensors.pojo.LatLon;
 import com.wasn.Sensors.pojo.Sensor;
+import com.wasn.Sensors.service.GetAddressTask;
 import com.wasn.Sensors.service.GpsReadingService;
 import com.wasn.Sensors.service.LocationService;
 
@@ -124,7 +126,9 @@ public class SensorList extends Fragment implements Handler.Callback {
 
                 if(sensor.isMySensor()) {
                     // start location service to get my location
-                    Intent serviceIntent = new Intent(getActivity(), LocationService.class);
+                    application.setServiceRequest(false);
+                    application.setQuery(null);
+                    Intent serviceIntent = new Intent(getActivity(), GpsReadingService.class);
                     getActivity().startService(serviceIntent);
                 } else {
                     // friend sensor
@@ -184,15 +188,41 @@ public class SensorList extends Fragment implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message message) {
-        String payLoad = (String)message.obj;
-        System.out.println("PAYLOAD AT SENSOR LIST " + payLoad);
+        System.out.println("handle lat lon");
+        if(message.obj instanceof LatLon) {
+            // get address from location
+            System.out.println("get location");
+            LatLon latLon = (LatLon) message.obj;
+            new GetAddressTask(SensorList.this).execute(latLon);
+        } else if(message.obj instanceof String) {
+            String payLoad = (String)message.obj;
+            System.out.println("PAYLOAD AT SENSOR LIST " + payLoad);
 
-        // data query
-        // reload adapter to get new value
-        if(!payLoad.equalsIgnoreCase("fail"))
-            adapter.reloadAdapter(application.getFiendSensorList());
+            // data query
+            // reload adapter to get new value
+            if(!payLoad.equalsIgnoreCase("fail")) {
+                // data queries comes with lat, lon
+                // ex DATA #lat 2.3434 #lon 2.5345 @user1
+                // need to get address from here and display it in list
+                adapter.reloadAdapter(application.getFiendSensorList());
+            }
+        }
 
         return false;
+    }
+
+    public void onPostAddress(String address) {
+        // when data receives update matching sensor(at friend sensor list) with incoming sensor value
+        // we assume here incoming query contains gps value of user
+        for(Sensor sensor: application.getFiendSensorList()) {
+            // find updating sensor
+            if(sensor.getUser().equalsIgnoreCase(application.getCurrentDataQuery().getUser())) {
+                // query user and sensor user should be match
+                sensor.setSensorValue(address);
+                sensor.setAvailable(true);
+                adapter.reloadAdapter(application.getFiendSensorList());
+            }
+        }
     }
 
 }

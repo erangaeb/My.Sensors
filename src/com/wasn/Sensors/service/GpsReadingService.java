@@ -9,10 +9,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
+import com.wasn.Sensors.application.SensorApplication;
+import com.wasn.Sensors.pojo.Query;
+import com.wasn.Sensors.utils.QueryParser;
+
+import java.util.HashMap;
 
 public class GpsReadingService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
                                                                 GooglePlayServicesClient.OnConnectionFailedListener {
 
+    SensorApplication application;
     private LocationClient locationClient;
 
     /*
@@ -20,6 +26,7 @@ public class GpsReadingService extends Service implements GooglePlayServicesClie
     */
     @Override
     public void onCreate() {
+        application = (SensorApplication) getApplication();
         locationClient = new LocationClient(getApplicationContext(), this,this);
     }
 
@@ -63,6 +70,23 @@ public class GpsReadingService extends Service implements GooglePlayServicesClie
             System.out.println("//////// " + location.getLatitude());
             System.out.println("//////// " + location.getLongitude());
             System.out.println("###################################");
+            if(application.isServiceRequest()) {
+                // construct message to send
+                String command = "DATA";
+                String user = application.getQuery().getUser();
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("lat", Double.toString(location.getLatitude()));
+                params.put("lon", Double.toString(location.getLongitude()));
+                String message = QueryParser.getMessage(new Query(command, user, params));
+
+                // send data to server
+                if(application.getWebSocketConnection().isConnected()) {
+                    application.getWebSocketConnection().sendTextMessage(message);
+                }
+            } else {
+
+            }
+
         }
 
         stopSelf();

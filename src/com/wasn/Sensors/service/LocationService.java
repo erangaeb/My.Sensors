@@ -66,6 +66,8 @@ public class LocationService extends Service {
             System.out.println("//////// " + location.getLongitude());
             System.out.println("//////// " + location.getLatitude());
             System.out.println("###################################");
+
+            stopSelf();
         }
         @Override
         public void onProviderDisabled(String provider) {}
