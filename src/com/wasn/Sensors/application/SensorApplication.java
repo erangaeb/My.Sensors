@@ -25,8 +25,9 @@ public class SensorApplication extends Application {
     // current user
     User user;
 
-    // keep shared fried sensors
+    // keep shared sensors
     ArrayList<Sensor> fiendSensorList = new ArrayList<Sensor>();
+    ArrayList<Sensor> mySensorList = new ArrayList<Sensor>();
 
     // determine sensor type
     //  1. my sensors
@@ -55,6 +56,9 @@ public class SensorApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // initially add my location to my sensor list
+        mySensorList.add(new Sensor("I'm", "Location", "LocationValue", true, false));
     }
 
     public Sensor getCurrentSensor() {
@@ -109,6 +113,14 @@ public class SensorApplication extends Application {
 
     public void setFiendSensorList(ArrayList<Sensor> fiendSensorList) {
         this.fiendSensorList = fiendSensorList;
+    }
+
+    public ArrayList<Sensor> getMySensorList() {
+        return mySensorList;
+    }
+
+    public void setMySensorList(ArrayList<Sensor> mySensorList) {
+        this.mySensorList = mySensorList;
     }
 
     public String getRandomLocation() {

@@ -148,12 +148,7 @@ public class SensorList extends Fragment implements Handler.Callback {
      * Get available sensors and current sensor data
      */
     private void initMySensors() {
-        // get all sensors manager
-        sensorList = new ArrayList<Sensor>();
-
-        // initially add location sensor
-        //sensorList.add(new Sensor(application.getUser().getUsername(), "Location", "Location", true, false));
-        sensorList.add(new Sensor("I'm", "Location", "Location", true, false));
+        sensorList = application.getMySensorList();
 
         // TODO add other important sensors to list
     }
@@ -195,15 +190,24 @@ public class SensorList extends Fragment implements Handler.Callback {
      * @param address location address
      */
     public void onPostAddressTask(String address) {
-        // when data receives update matching sensor(at friend sensor list) with incoming sensor value
-        // we assume here incoming query contains gps value of user
-        for(Sensor sensor: application.getFiendSensorList()) {
-            // find updating sensor
-            if(sensor.getUser().equalsIgnoreCase(application.getCurrentDataQuery().getUser())) {
-                // query user and sensor user should be match
-                sensor.setSensorValue(address);
-                sensor.setAvailable(true);
-                adapter.reloadAdapter(application.getFiendSensorList());
+        if(SensorApplication.SENSOR.equalsIgnoreCase(SensorApplication.MY_SENSORS)) {
+            // update my location
+            // reload adapter to display new sensor value
+            // currently only have one sensor, that's why we update 1st element always
+            application.getMySensorList().get(0).setSensorValue(address);
+            application.getMySensorList().get(0).setAvailable(true);
+            adapter.reloadAdapter(sensorList);
+        } else {
+            // when data receives update matching sensor(at friend sensor list) with incoming sensor value
+            // we assume here incoming query contains gps value of user
+            for(Sensor sensor: application.getFiendSensorList()) {
+                // find updating sensor
+                if(sensor.getUser().equalsIgnoreCase(application.getCurrentDataQuery().getUser())) {
+                    // query user and sensor user should be match
+                    sensor.setSensorValue(address);
+                    sensor.setAvailable(true);
+                    adapter.reloadAdapter(application.getFiendSensorList());
+                }
             }
         }
     }
