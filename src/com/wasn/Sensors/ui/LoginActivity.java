@@ -36,9 +36,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
         setContentView(R.layout.login);
 
         application = (SensorApplication) this.getApplication();
+        application.setCallback(this);
 
         initUI();
-        application.setCallback(this);
     }
 
     /**
@@ -59,10 +59,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
     public void onClick(View v) {
         if (v==login) {
             login();
-            //switchToHome();
         }
     }
 
+    /**
+     * Login action
+     */
     private void login() {
         if(!username.getText().toString().trim().equals("") && !password.getText().toString().trim().equals("")) {
             // create user and share in application
@@ -78,29 +80,36 @@ public class LoginActivity extends Activity implements View.OnClickListener, Han
         }
     }
 
+    /**
+     * Switch to home activity
+     */
     private void switchToHome() {
         Intent intent = new Intent(this, HomeActivity.class);
         this.startActivity(intent);
         this.finish();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean handleMessage(Message message) {
-        String payLoad = (String)message.obj;
-        System.out.println("PAYLOAD AT LOGIN " + payLoad);
+        // we handle string messages only from here
+        if(message.obj instanceof String) {
+            String payLoad = (String)message.obj;
 
-        // successful login returns "Hello"
-        if(payLoad.equalsIgnoreCase("success")) {
-            // un-register login activity from callback
-            application.setCallback(null);
-            Toast.makeText(LoginActivity.this, "Successfully login", Toast.LENGTH_LONG).show();
-            switchToHome();
+            // successful login returns "Hello"
+            if(payLoad.equalsIgnoreCase("success")) {
+                // un-register login activity from callback
+                switchToHome();
 
-            return true;
-        } else {
-            Toast.makeText(LoginActivity.this, "Login fail", Toast.LENGTH_LONG).show();
-
-            return false;
+                return true;
+            } else {
+                Toast.makeText(LoginActivity.this, "Login fail", Toast.LENGTH_LONG).show();
+            }
         }
+
+        return false;
     }
+
 }

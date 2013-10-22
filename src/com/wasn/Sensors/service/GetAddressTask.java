@@ -54,10 +54,9 @@ public class GetAddressTask extends AsyncTask<LatLon, String, String> {
             e2.printStackTrace();
             return "NOT_AVAILABLE";
         }
+
         // If the reverse geocode returned an address
         if (addresses != null && addresses.size() > 0) {
-            System.out.println("have address");
-
             // Get the first address
             Address address = addresses.get(0);
 
@@ -70,11 +69,7 @@ public class GetAddressTask extends AsyncTask<LatLon, String, String> {
 
     @Override
     protected void onPostExecute(String address) {
-        System.out.println("post exe  " + address);
-
-        // add address lo sensor list
-        if(!address.equalsIgnoreCase("NOT_AVAILABLE")) {
-            sensorList.onPostAddressTask(address);
-        }
+        // notify address to sensor list
+        sensorList.onPostAddressTask(address);
     }
 }

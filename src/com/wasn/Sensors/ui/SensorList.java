@@ -50,6 +50,7 @@ public class SensorList extends Fragment implements Handler.Callback {
         super.onActivityCreated(savedInstanceState);
 
         application = (SensorApplication) getActivity().getApplication();
+        application.setCallback(this);
 
         initEmptyView();
 
@@ -72,9 +73,6 @@ public class SensorList extends Fragment implements Handler.Callback {
             initSensorListView();
             getActivity().getActionBar().setTitle("Friends.SenZors");
         }
-
-        // set call back
-        application.setCallback(this);
     }
 
     /**
@@ -89,18 +87,11 @@ public class SensorList extends Fragment implements Handler.Callback {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
+
+        // reset callback
+        application.setCallback(this);
     }
 
     /**
@@ -169,7 +160,6 @@ public class SensorList extends Fragment implements Handler.Callback {
 
     private void initFriendsSensors() {
         sensorList = application.getFiendSensorList();
-        //sensorList.add(new Sensor("Vijitha", "Location", "Location", false, false));
     }
 
     /**
@@ -185,29 +175,25 @@ public class SensorList extends Fragment implements Handler.Callback {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean handleMessage(Message message) {
         if(message.obj instanceof LatLon) {
+            // we handle LatLon messages only, from here
             // get address from location
             LatLon latLon = (LatLon) message.obj;
             new GetAddressTask(SensorList.this).execute(latLon);
-        } else if(message.obj instanceof String) {
-            String payLoad = (String)message.obj;
-            System.out.println("PAYLOAD AT SENSOR LIST " + payLoad);
-
-            // data query
-            // reload adapter to get new value
-            if(!payLoad.equalsIgnoreCase("fail")) {
-                // data queries comes with lat, lon
-                // ex DATA #lat 2.3434 #lon 2.5345 @user1
-                // need to get address from here and display it in list
-                adapter.reloadAdapter(application.getFiendSensorList());
-            }
         }
 
         return false;
     }
 
+    /**
+     * Execute after finish the GetAddressTask
+     * @param address location address
+     */
     public void onPostAddressTask(String address) {
         // when data receives update matching sensor(at friend sensor list) with incoming sensor value
         // we assume here incoming query contains gps value of user
