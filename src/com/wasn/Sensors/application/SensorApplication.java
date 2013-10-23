@@ -36,8 +36,8 @@ public class SensorApplication extends Application {
     public final static String FRIENDS_SENSORS = "FRIENDS_SENSORS";
     public static String SENSOR = MY_SENSORS;
 
-    public final static String WEB_SOCKET_URI = "ws://10.2.4.14:9000";
-    //public final static String WEB_SOCKET_URI = "ws://mysensors.ucsc.lk:9000";
+    //public final static String WEB_SOCKET_URI = "ws://10.2.4.14:9000";
+    public final static String WEB_SOCKET_URI = "ws://mysensors.ucsc.lk:9000";
 
     // web socket connection share in application
     public final WebSocket webSocketConnection = new WebSocketConnection();
