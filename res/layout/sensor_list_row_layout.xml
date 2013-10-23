@@ -14,12 +14,12 @@
         android:layout_height="100dp">
 
         <ImageView
-                android:layout_marginTop="20dp"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_marginTop="12dp"
+                android:layout_width="100dp"
+                android:layout_height="90dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/loc">
+                android:background="@drawable/map2">
         </ImageView>
 
         <LinearLayout
@@ -87,7 +87,7 @@
     </RelativeLayout>
 
     <TextView
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="23sp"
@@ -101,8 +101,8 @@
     <TextView
         android:layout_marginTop="8dp"
         android:layout_marginBottom="15dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="23sp"

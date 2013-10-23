@@ -73,16 +73,32 @@ public class ShareActivity extends Activity implements Handler.Callback {
                 return true;
             case R.id.action_share:
                 // share sensor data
-                // and go back
-                String query = "SHARE" + " " + "#gps" + " " + "@"+emailEditText.getText().toString().trim();
-                if(application.getWebSocketConnection().isConnected())
-                    application.getWebSocketConnection().sendTextMessage(query);
+                share();
 
-                ActivityUtils.hideSoftKeyboard(this);
+
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Share action
+     */
+    private void share() {
+        String email = emailEditText.getText().toString().trim();
+        String query = "SHARE" + " " + "#gps" + " " + "@"+emailEditText.getText().toString().trim();
+
+        // validate sher attribute first
+        if(!email.equalsIgnoreCase("")) {
+            // construct query and send to server vis socket
+            if(application.getWebSocketConnection().isConnected())
+                application.getWebSocketConnection().sendTextMessage(query);
+
+            ActivityUtils.hideSoftKeyboard(this);
+        } else {
+            Toast.makeText(ShareActivity.this, "Make sure non empty email address", Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
